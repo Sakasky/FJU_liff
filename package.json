@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/FJU_liff/",
     "preview": "vite preview"
   },
   "dependencies": {

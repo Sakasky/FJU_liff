@@ -10,6 +10,9 @@ export default defineConfig({
     vue(),
   
   ],
+  build: {
+    minify: true,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
