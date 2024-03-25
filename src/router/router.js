@@ -1,11 +1,11 @@
 
 const routes = [
   {
-    path: '/FJU_liff/',
+    path: "/",
     component: () => import("/src/views/Home.vue")
   },
   {
-    path: "/FJU_liff/order",
+    path: "/order",
     component: () => import("/src/views/OrderView.vue")
   },
 
