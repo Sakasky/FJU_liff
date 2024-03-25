@@ -6,15 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LIFF</title>
   </head>
-  <script>
-    (function(){
-      let redirect = sessionStorage.redirect;
-      delete sessionStorage.redirect;
-      if (redirect && redirect !== location.href) {
-        history.replaceState(null, null, redirect);
-      }
-    })();
-  </script>
+
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
