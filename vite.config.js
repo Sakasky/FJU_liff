@@ -4,7 +4,7 @@ import * as path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base:'./',  // <=================新增這行
+  //base:'./',  // <=================新增這行
   plugins: [
     // VueDevTools(),
     vue(),
@@ -13,6 +13,7 @@ export default defineConfig({
   build: {
     minify: true,
   },
+  base: process.env.NODE_ENV === 'production' ? '/FJU_liff/' : './',
 
   resolve: {
     alias: {
