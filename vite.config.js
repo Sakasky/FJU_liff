@@ -13,7 +13,6 @@ export default defineConfig({
   build: {
     minify: true,
   },
-  base: process.env.NODE_ENV === 'production' ? '/FJU_liff/' : './',
 
   resolve: {
     alias: {
