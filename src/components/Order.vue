@@ -151,7 +151,7 @@ const checkUserIDisExistFunc = () => {
     formData.append('method', 'checkUserIDisExist');
     formData.append('userid', user.userid);   
     // formData.append('userid', 'U026dd072b34c71593f4fb6d1176d2c20');     
-
+    console.log(formData.get('userid'))
     axios({
         method: 'post',
         url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
