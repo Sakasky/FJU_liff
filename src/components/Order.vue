@@ -5,21 +5,21 @@
     <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
             <label for="name">姓名</label>
-            <input type="text" id="name" v-model="formData.personName" class="border border-gray-300 rounded-md p-2" />
+            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" />
             <label for="phone">您的電話號碼</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="text" id="phone" v-model="formData.personPhone" />
+            <input class="border border-gray-300 rounded-md p-2"  type="text" id="phone" v-model="input.personPhone" />
             <label  for="issue">看診問題/備註事項</label>
-            <textarea class="border border-gray-300 rounded-md p-2"  id="issue" v-model="formData.issue"></textarea>
+            <textarea class="border border-gray-300 rounded-md p-2"  id="issue" v-model="input.issue"></textarea>
             <label for="doctor">約診醫生</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="text" id="doctor" v-model="formData.doctor" />
+            <input class="border border-gray-300 rounded-md p-2"  type="text" id="doctor" v-model="input.doctor" />
             <label for="department">科別</label>
-            <select class="border border-gray-300 rounded-md p-2"  id="department" v-model="formData.department" >
+            <select class="border border-gray-300 rounded-md p-2"  id="department" v-model="input.department" >
                 <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
             </select>
             <label for="date">就診日</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="date" id="date" v-model="formData.orderDate" />
+            <input class="border border-gray-300 rounded-md p-2"  type="date" id="date" v-model="input.orderDate" />
             <label for="notes">備註欄,或其他您方便約診的時間</label>
-            <textarea class="border border-gray-300 rounded-md p-2"  id="notes" v-model="formData.notes"></textarea>
+            <textarea class="border border-gray-300 rounded-md p-2"  id="notes" v-model="input.notes"></textarea>
             <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded">送出</button>
         </form>
         
@@ -59,6 +59,7 @@ const checkUserIDisExist = ref(false);
 const addPersonID= ref(false);
 const finishAddPersonID= ref(false);
 const finishAddVIPPersonID= ref(false);
+const finishOrder = ref(false);
 const department_data = [
     "ANES/麻醉疼痛科",
     "BS/乳房外科",
@@ -92,7 +93,7 @@ const department_data = [
     "心理諮商",
     "PEDS/小兒外科"
 ];
-const formData = ref({
+const input = ref({
     method: 'addOrder',
     personName: '',
     personPhone: '',
@@ -104,9 +105,16 @@ const formData = ref({
 })
 
 const addOrderFunc = () => {
-    formData.method = 'addOrder';
-    
-    console.log("formData",formData);
+    const formData = new FormData();
+    formData.append('method', 'addOrder');
+    formData.append('personName', input.value.personName);
+    formData.append('issue', input.value.issue);
+    formData.append('doctor', input.value.doctor);
+    formData.append('department', input.value.department);
+    formData.append('orderDate', input.value.orderDate);
+    formData.append('notes', input.value.notes);
+
+
     axios({
         method: 'post',
         url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
@@ -118,7 +126,7 @@ const addOrderFunc = () => {
         // Handle the response here
         console.log(response);
         idPending.value = false;
-        showCheckUserIDisExistㄡ.value = false;
+        showCheckUserIDisExist.value = false;
         finishOrder.value = true;
         
     })
@@ -134,7 +142,7 @@ const checkUserIDisExistFunc = () => {
     formData.append('method', 'checkUserIDisExist');
     formData.append('userid', user.userid);   
     // formData.append('userid', 'U026dd072b34c71593f4fb6d1176d2c20');     
-    
+
     axios({
         method: 'post',
         url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
@@ -145,7 +153,6 @@ const checkUserIDisExistFunc = () => {
         if(response.data.result === "useridisexist"){
             personID.value = response.data.personid;
             res.value = response.data;
-            console.log("personID",personID);
             showCheckUserIDisExist.value = true;
         }else{
             showCheckUserIDisExist.value = false;
