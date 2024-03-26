@@ -104,36 +104,45 @@ const input = ref({
     notes: ''
 })
 
-const addOrderFunc = () => {
-    const formData = new FormData();
-    formData.append('method', 'addOrder');
-    formData.append('personName', input.value.personName);
-    formData.append('issue', input.value.issue);
-    formData.append('doctor', input.value.doctor);
-    formData.append('department', input.value.department);
-    formData.append('orderDate', input.value.orderDate);
-    formData.append('notes', input.value.notes);
+let addOrderTimer = null;
 
-    axios({
-        method: 'post',
-        url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
-        data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
-    }) 
-    .then(response => {
-        res.value = response.data;
-        // Handle the response here
-        console.log(response);
-        idPending.value = false;
-        showCheckUserIDisExist.value = false;
-        finishOrder.value = true;
-        
-    })
-    .catch(error => {
-        // Handle the error here
-        alert("預約失敗，請稍後再試或聯絡診所");
-        console.log(error);
-    });
+const addOrderFunc = () => {
+    // 清除之前的延时器
+    if (addOrderTimer) {
+        clearTimeout(addOrderTimer);
+    }
+
+    // 创建新的延时器
+    addOrderTimer = setTimeout(() => {
+        const formData = new FormData();
+        formData.append('method', 'addOrder');
+        formData.append('personName', input.value.personName);
+        formData.append('issue', input.value.issue);
+        formData.append('doctor', input.value.doctor);
+        formData.append('department', input.value.department);
+        formData.append('orderDate', input.value.orderDate);
+        formData.append('notes', input.value.notes);
+
+        axios({
+            method: 'post',
+            url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+            data: formData,
+            headers: { 'Content-Type': 'multipart/form-data' }
+        }) 
+        .then(response => {
+            res.value = response.data;
+            // Handle the response here
+            console.log(response);
+            idPending.value = false;
+            showCheckUserIDisExist.value = false;
+            finishOrder.value = true;
+        })
+        .catch(error => {
+            // Handle the error here
+            alert("預約失敗，請稍後再試或聯絡診所");
+            console.log(error);
+        });
+    }, 1000); // 设置延时时间，单位为毫秒
 }
 
 const checkUserIDisExistFunc = () => {
