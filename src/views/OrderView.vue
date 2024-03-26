@@ -10,7 +10,7 @@ const userdataEmail = ref(null);
 onMounted(async () => {
   liff
   .init({
-    liffId: "1657869644-jDxqpoMV", // 從LIFF頁面中拿到的ID
+    liffId: "1657869644-x3BZd5wE", // 從LIFF頁面中拿到的ID
   })
   .then(() => { 
     if(liff.isLoggedIn()){
