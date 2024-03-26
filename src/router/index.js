@@ -4,7 +4,7 @@ import routerMap from "./router.js";
 const base = "/";
 
 const router = createRouter({
-  history: createWebHashHistory(base),
+  history: createWebHistory(base),
   routes: routerMap.routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
