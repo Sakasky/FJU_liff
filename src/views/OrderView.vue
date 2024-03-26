@@ -34,13 +34,7 @@ const closeWindow = () => {
 
 <template>
   <div class="text-xl">    
-    <p class="text-center" >
-      isLogin:    {{ isLogin }}
-      userdata UID:    {{ userdataUID }}
-      userdata mail:    {{ userdataEmail }}
-    </p>
     
-
     <Order @close-window="closeWindow" :userid="userdataUID"/>
 
   </div>

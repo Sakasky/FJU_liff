@@ -3,10 +3,10 @@ import liff from "@line/liff";
 import { onMounted, ref } from "vue";
 import Survey from "../components/Survey.vue";
 
-
 const isLogin = ref(false)
 const userdataUID = ref(null);
 const userdataEmail = ref(null);
+
 onMounted(async () => {
   liff
   .init({

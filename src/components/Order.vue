@@ -1,5 +1,4 @@
 <template>
-    {{ user }}
     <div v-if="idPending" class="flex items-center justify-center m-auto pt-10">
         讀取中
     </div>
