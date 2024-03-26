@@ -183,11 +183,11 @@ const checkUserIDisExistFunc = () => {
 const closePop=()=>{
     $emit('close-window');
 }
-onMounted(() => {
-    checkUserIDisExistFunc();
-});
-// watch(user, (newValue, oldValue) => {
-//     console.log("user.userid",user.userid);
+// onMounted(() => {
 //     checkUserIDisExistFunc();
 // });
+watch(user, (newValue, oldValue) => {
+    console.log("user.userid",user.userid);
+    checkUserIDisExistFunc();
+});
 </script>
