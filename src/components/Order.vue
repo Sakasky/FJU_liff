@@ -41,12 +41,12 @@
 import { ref,onMounted, watch, shallowReactive } from 'vue';
 import axios from 'axios';
 
-//const user = defineProps(['userid'])
+const user = defineProps(['userid'])
 const res = ref(null)
 
-const user = {
-    userid: 'U14b5e7710fe33928351643793294dc3c'
-}
+// const user = {
+//     userid: 'U14b5e7710fe33928351643793294dc3c'
+// }
 
 console.log("userID",user.userid);
 const personID = ref('');
