@@ -34,7 +34,7 @@ const closeWindow = () => {
 
 <template>
   <div class="text-xl">    
-    <p class="text-center" v-if="isLogin">
+    <p class="text-center" >
       isLogin:    {{ isLogin }}
       userdata UID:    {{ userdataUID }}
       userdata mail:    {{ userdataEmail }}
