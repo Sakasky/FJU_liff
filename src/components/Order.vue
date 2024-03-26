@@ -5,19 +5,19 @@
     <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
             <label for="name">姓名</label>
-            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" />
+            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required" pattern="[A-Za-z]+" />
             <label for="phone">您的電話號碼</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="text" id="phone" v-model="input.personPhone" />
+            <input class="border border-gray-300 rounded-md p-2" type="text" id="phone" v-model="input.personPhone" required="required" pattern="[0-9]+" />
             <label  for="issue">看診問題/備註事項</label>
             <textarea class="border border-gray-300 rounded-md p-2"  id="issue" v-model="input.issue"></textarea>
             <label for="doctor">約診醫生</label>
             <input class="border border-gray-300 rounded-md p-2"  type="text" id="doctor" v-model="input.doctor" />
             <label for="department">科別</label>
-            <select class="border border-gray-300 rounded-md p-2"  id="department" v-model="input.department" >
+            <select class="border border-gray-300 rounded-md p-2"  id="department" v-model="input.department" required>
                 <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
             </select>
             <label for="date">就診日</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="date" id="date" v-model="input.orderDate" />
+            <input class="border border-gray-300 rounded-md p-2"  type="date" id="date" v-model="input.orderDate"  required="required" />
             <label for="notes">備註欄,或其他您方便約診的時間</label>
             <textarea class="border border-gray-300 rounded-md p-2"  id="notes" v-model="input.notes"></textarea>
             <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded">送出</button>
@@ -113,7 +113,6 @@ const addOrderFunc = () => {
     formData.append('department', input.value.department);
     formData.append('orderDate', input.value.orderDate);
     formData.append('notes', input.value.notes);
-
 
     axios({
         method: 'post',
