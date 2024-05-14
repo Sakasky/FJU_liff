@@ -5,7 +5,7 @@
     <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
             <label for="name">姓名</label>
-            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required" pattern="[A-Za-z]+" />
+            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required" pattern="[A-Za-z\u4e00-\u9fa5]+" />
             <label for="phone">您的電話號碼</label>
             <input class="border border-gray-300 rounded-md p-2" type="text" id="phone" v-model="input.personPhone" required="required" pattern="[0-9]+" />
             <label  for="issue">看診問題/備註事項</label>
@@ -20,7 +20,10 @@
             <input class="border border-gray-300 rounded-md p-2"  type="date" id="date" v-model="input.orderDate"  required="required" />
             <label for="notes">備註欄,或其他您方便約診的時間</label>
             <textarea class="border border-gray-300 rounded-md p-2"  id="notes" v-model="input.notes"></textarea>
-            <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded">送出</button>
+            <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded" :disabled="isSending">
+                <span v-if="isSending">送出中...</span>
+                <span v-else>送出</span>
+            </button>
         </form>
         
     </div>
@@ -142,7 +145,7 @@ const addOrderFunc = () => {
             alert("預約失敗，請稍後再試或聯絡診所");
             console.log(error);
         });
-    }, 1000); // 设置延时时间，单位为毫秒
+    }, 2000); // 设置延时时间，单位为毫秒
 }
 
 const checkUserIDisExistFunc = () => {
