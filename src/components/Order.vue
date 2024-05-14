@@ -5,7 +5,7 @@
     <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
             <label for="name">姓名</label>
-            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required" pattern="[A-Za-z\u4e00-\u9fa5]+" />
+            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required"  />
             <label for="phone">您的電話號碼</label>
             <input class="border border-gray-300 rounded-md p-2" type="text" id="phone" v-model="input.personPhone" required="required" pattern="[0-9]+" />
             <label  for="issue">看診問題/備註事項</label>
