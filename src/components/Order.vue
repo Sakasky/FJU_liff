@@ -62,6 +62,7 @@ const checkUserIDisExist = ref(false);
 const addPersonID= ref(false);
 const finishAddPersonID= ref(false);
 const finishAddVIPPersonID= ref(false);
+const isSending = ref(false);
 const finishOrder = ref(false);
 const department_data = [
     "ANES/麻醉疼痛科",
@@ -125,6 +126,7 @@ const addOrderFunc = () => {
         formData.append('department', input.value.department);
         formData.append('orderDate', input.value.orderDate);
         formData.append('notes', input.value.notes);
+        isSending.value = true;
 
         axios({
             method: 'post',
@@ -133,6 +135,7 @@ const addOrderFunc = () => {
             headers: { 'Content-Type': 'multipart/form-data' }
         }) 
         .then(response => {
+            isSending.value = false;
             res.value = response.data;
             // Handle the response here
             console.log(response);
