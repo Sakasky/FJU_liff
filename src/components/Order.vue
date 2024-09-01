@@ -120,9 +120,11 @@ const addOrderFunc = () => {
     addOrderTimer = setTimeout(() => {
         const formData = new FormData();
         formData.append('method', 'addOrder');
+        formData.append('userid', user.userid);   
         formData.append('personName', input.value.personName);
         formData.append('issue', input.value.issue);
         formData.append('doctor', input.value.doctor);
+        formData.append('personPhone', input.value.personPhone);
         formData.append('department', input.value.department);
         formData.append('orderDate', input.value.orderDate);
         formData.append('notes', input.value.notes);
@@ -164,6 +166,7 @@ const checkUserIDisExistFunc = () => {
         headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     })
     .then(response => {
+        console.log(response);
         if(response.data.result === "useridisexist"){
             personID.value = response.data.personid;
             res.value = response.data;
