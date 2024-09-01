@@ -2,8 +2,9 @@
 import liff from "@line/liff";
 import { onMounted, ref } from "vue";
 import Order from "../components/Order.vue";
+import VConsole from 'vconsole';
 
-
+new VConsole();
 const isLogin = ref(false)
 const userdataUID = ref(null);
 const userdataEmail = ref(null);
