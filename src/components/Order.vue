@@ -132,9 +132,9 @@ const addOrderFunc = () => {
 
         axios({
             method: 'post',
-            url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+            url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
             data: formData,
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: { 'Origin': 'https://liff.line.me' }
         }) 
         .then(response => {
             isSending.value = false;
