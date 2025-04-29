@@ -1,8 +1,8 @@
 <template>
-    <div v-if="!idPending" class="flex items-center justify-center m-auto pt-10">
+    <div v-if="idPending" class="flex items-center justify-center m-auto pt-10">
         讀取中
     </div>
-    <div v-if="!showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
+    <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
             <label for="name">姓名</label>
             <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required"  />
