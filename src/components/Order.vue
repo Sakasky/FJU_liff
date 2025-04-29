@@ -111,35 +111,32 @@ const input = ref({
 let addOrderTimer = null;
 
 const addOrderFunc = () => {
-    // 清除之前的延时器
     if (addOrderTimer) {
         clearTimeout(addOrderTimer);
     }
 
-    // 创建新的延时器
     addOrderTimer = setTimeout(() => {
-        const formData = new FormData();
-        formData.append('method', 'addOrder');
-        formData.append('userid', user.userid);   
-        formData.append('personName', input.value.personName);
-        formData.append('issue', input.value.issue);
-        formData.append('doctor', input.value.doctor);
-        formData.append('personPhone', input.value.personPhone);
-        formData.append('department', input.value.department);
-        formData.append('orderDate', input.value.orderDate);
-        formData.append('notes', input.value.notes);
+        const params = new URLSearchParams();
+        params.append('method', 'addOrder');
+        params.append('userid', user.userid);
+        params.append('personName', input.value.personName);
+        params.append('issue', input.value.issue);
+        params.append('doctor', input.value.doctor);
+        params.append('personPhone', input.value.personPhone);
+        params.append('department', input.value.department);
+        params.append('orderDate', input.value.orderDate);
+        params.append('notes', input.value.notes);
         isSending.value = true;
 
         axios({
             method: 'post',
             url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
-            data: formData,
+            data: params,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         }) 
         .then(response => {
             isSending.value = false;
             res.value = response.data;
-            // Handle the response here
-            console.log(response);
             idPending.value = false;
             showCheckUserIDisExist.value = false;
             finishOrder.value = true;
@@ -171,7 +168,7 @@ const addOrderFunc = () => {
             alert("預約失敗，請稍後再試或聯絡診所");
             console.log(error);
         });
-    }, 2000); // 设置延时时间，单位为毫秒
+    }, 2000);
 }
 
 const checkUserIDisExistFunc = () => {
