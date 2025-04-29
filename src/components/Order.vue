@@ -134,7 +134,6 @@ const addOrderFunc = () => {
             method: 'post',
             url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
             data: formData,
-            headers: { 'Origin': 'https://liff.line.me' }
         }) 
         .then(response => {
             isSending.value = false;
@@ -146,7 +145,29 @@ const addOrderFunc = () => {
             finishOrder.value = true;
         })
         .catch(error => {
-            // Handle the error here
+            // 嘗試解析 response 內容
+            if (error.response && error.response.data) {
+                try {
+                    // 有些情況下 data 可能是字串
+                    let data = error.response.data;
+                    if (typeof data === 'string') {
+                        // 嘗試去除多餘字元再解析
+                        data = data.replace(/%$/, '');
+                        const json = JSON.parse(data);
+                        // 如果 status 是 success，當作成功處理
+                        if (json.status === 'success') {
+                            isSending.value = false;
+                            res.value = json;
+                            idPending.value = false;
+                            showCheckUserIDisExist.value = false;
+                            finishOrder.value = true;
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    // 解析失敗，繼續顯示錯誤
+                }
+            }
             alert("預約失敗，請稍後再試或聯絡診所");
             console.log(error);
         });
@@ -157,7 +178,7 @@ const checkUserIDisExistFunc = () => {
     const formData = new FormData();
     formData.append('method', 'checkUserIDisExist');
     formData.append('userid', user.userid);   
-    // formData.append('userid', 'U026dd072b34c71593f4fb6d1176d2c20');     
+    //formData.append('userid', 'U14b5e7710fe33928351643793294dc3c');     
     console.log(formData.get('userid'))
     axios({
         method: 'post',
