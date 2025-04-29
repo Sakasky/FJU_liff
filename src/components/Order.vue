@@ -1,8 +1,8 @@
 <template>
-    <div v-if="idPending" class="flex items-center justify-center m-auto pt-10">
+    <div v-if="!idPending" class="flex items-center justify-center m-auto pt-10">
         讀取中
     </div>
-    <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
+    <div v-if="!showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
             <label for="name">姓名</label>
             <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required"  />
@@ -125,7 +125,7 @@ const addOrderFunc = () => {
         params.append('personPhone', input.value.personPhone);
         params.append('department', input.value.department);
         params.append('orderDate', input.value.orderDate);
-        params.append('notes', input.value.notes);
+        params.append('notes', input.value.notes || '');
         isSending.value = true;
 
         axios({
@@ -142,30 +142,11 @@ const addOrderFunc = () => {
             finishOrder.value = true;
         })
         .catch(error => {
-            // 嘗試解析 response 內容
-            if (error.response && error.response.data) {
-                try {
-                    // 有些情況下 data 可能是字串
-                    let data = error.response.data;
-                    if (typeof data === 'string') {
-                        // 嘗試去除多餘字元再解析
-                        data = data.replace(/%$/, '');
-                        const json = JSON.parse(data);
-                        // 如果 status 是 success，當作成功處理
-                        if (json.status === 'success') {
-                            isSending.value = false;
-                            res.value = json;
-                            idPending.value = false;
-                            showCheckUserIDisExist.value = false;
-                            finishOrder.value = true;
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    // 解析失敗，繼續顯示錯誤
-                }
+            let msg = "預約失敗，請稍後再試或聯絡診所";
+            if ( error.response.data) {
+                msg = error.response.data.message;
             }
-            alert("預約失敗，請稍後再試或聯絡診所");
+            alert(msg);
             console.log(error);
         });
     }, 2000);
