@@ -1,6 +1,6 @@
 <template>
     <div v-if="idPending" class="flex items-center justify-center m-auto pt-10">
-        讀取中
+        讀取中？
     </div>
     <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
         <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
