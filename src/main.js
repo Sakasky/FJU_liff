@@ -7,10 +7,9 @@ import VConsole from 'vconsole';
 
 const app = createApp(App);
 const pinia = createPinia();
-const vConsole = new VConsole();
+
 
 app.use(pinia);
 app.use(router);
-app.use(vConsole);
 
 app.mount("#app");
