@@ -3,29 +3,47 @@
         讀取中
     </div>
     <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
-        <form class="flex flex-col items-center p-4" @submit.prevent="addOrderFunc()">
-            <label for="name">姓名</label>
-            <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2" required="required"  />
-            <label for="phone">您的電話號碼</label>
-            <input class="border border-gray-300 rounded-md p-2" type="text" id="phone" v-model="input.personPhone" required="required" pattern="[0-9]+" />
-            <label  for="issue">看診問題/備註事項</label>
-            <textarea class="border border-gray-300 rounded-md p-2"  id="issue" v-model="input.issue"></textarea>
-            <label for="doctor">約診醫生</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="text" id="doctor" v-model="input.doctor" />
-            <label for="department">科別</label>
-            <select class="border border-gray-300 rounded-md p-2"  id="department" v-model="input.department" required>
-                <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
-            </select>
-            <label for="date">就診日</label>
-            <input class="border border-gray-300 rounded-md p-2"  type="date" id="date" v-model="input.orderDate"  required="required" />
-            <label for="notes">備註欄,或其他您方便約診的時間</label>
-            <textarea class="border border-gray-300 rounded-md p-2"  id="notes" v-model="input.notes"></textarea>
-            <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded" :disabled="isSending">
+        <form class="flex flex-col items-center p-4 bg-white shadow-lg rounded-lg w-full max-w-md" @submit.prevent="addOrderFunc()">
+            <div class="mb-4 w-full text-left">
+                <label for="name" class="block font-bold mb-1">姓名<span class="text-red-500">*</span></label>
+                <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" required />
+                <p v-if="showError && !input.personName" class="text-red-500 text-xs mt-1">請輸入姓名</p>
+            </div>
+            <div class="mb-4 w-full text-left">
+                <label for="phone" class="block font-bold mb-1">您的電話號碼<span class="text-red-500">*</span></label>
+                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="text" id="phone" v-model="input.personPhone" required pattern="[0-9]+" />
+                <p v-if="showError && !input.personPhone" class="text-red-500 text-xs mt-1">請輸入電話號碼</p>
+            </div>
+            <div class="mb-4 w-full text-left">
+                <label for="issue" class="block font-bold mb-1">看診問題/備註事項</label>
+                <textarea class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="issue" v-model="input.issue"></textarea>
+            </div>
+            <div class="mb-4 w-full text-left">
+                <label for="doctor" class="block font-bold mb-1">約診醫生</label>
+                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="text" id="doctor" v-model="input.doctor" />
+            </div>
+            <div class="mb-4 w-full text-left">
+                <label for="department" class="block font-bold mb-1">科別<span class="text-red-500">*</span></label>
+                <select class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="department" v-model="input.department" required>
+                    <option value="" disabled>請選擇科別</option>
+                    <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
+                </select>
+                <p v-if="showError && !input.department" class="text-red-500 text-xs mt-1">請選擇科別</p>
+            </div>
+            <div class="mb-4 w-full text-left">
+                <label for="date" class="block font-bold mb-1">就診日<span class="text-red-500">*</span></label>
+                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="date" id="date" v-model="input.orderDate" required />
+                <p v-if="showError && !input.orderDate" class="text-red-500 text-xs mt-1">請選擇就診日</p>
+            </div>
+            <div class="mb-4 w-full text-left">
+                <label for="notes" class="block font-bold mb-1">備註欄,或其他您方便約診的時間</label>
+                <textarea class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="notes" v-model="input.notes"></textarea>
+            </div>
+            <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition" :disabled="isSending">
                 <span v-if="isSending">送出中...</span>
                 <span v-else>送出</span>
             </button>
         </form>
-        
     </div>
     
     <div v-if="showCheckUserIDisNotExist" class="flex items-center justify-center flex-col p-10 text-center">
@@ -109,8 +127,16 @@ const input = ref({
 })
 
 let addOrderTimer = null;
+const showError = ref(false);
 
 const addOrderFunc = () => {
+    showError.value = false;
+    // 必填欄位檢查
+    if (!input.value.personName || !input.value.personPhone || !input.value.department || !input.value.orderDate) {
+        showError.value = true;
+        return;
+    }
+
     if (addOrderTimer) {
         clearTimeout(addOrderTimer);
     }
