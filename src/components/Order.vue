@@ -18,7 +18,10 @@
                 <label for="issue" class="block font-bold mb-1">看診問題/備註事項</label>
                 <textarea class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="issue" v-model="input.issue"></textarea>
             </div>
-       
+            <div class="mb-4 w-full text-left">
+                <label for="doctor" class="block font-bold mb-1">約診醫生</label>
+                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="text" id="doctor" v-model="input.doctor" />
+            </div>
             <div class="mb-4 w-full text-left">
                 <label for="department" class="block font-bold mb-1">科別<span class="text-red-500">*</span></label>
                 <select class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="department" v-model="input.department" required>
@@ -117,7 +120,7 @@ const input = ref({
     personName: '',
     personPhone: '',
     issue: '',
-    doctor: '', //後來取消此欄位 先保留
+    doctor: '',
     department: '',
     orderDate: '',
     notes: ''
