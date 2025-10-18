@@ -331,7 +331,7 @@ const checkUserIDisExistFunc = () => {
 
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/check_person_exists',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/check_user_registered',
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' }
     })
