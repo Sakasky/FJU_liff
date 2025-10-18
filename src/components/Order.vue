@@ -1,59 +1,158 @@
 <template>
-    <div v-if="idPending" class="flex items-center justify-center m-auto pt-10">
-        讀取中
+    <div v-if="idPending" class="flex items-center justify-center min-h-screen">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+            <p class="text-gray-600 text-lg">讀取中...</p>
+        </div>
     </div>
-    <div v-if="showCheckUserIDisExist" class="flex items-center justify-center flex-col p-10 text-center">
-        <form class="flex flex-col items-center p-4 bg-white shadow-lg rounded-lg w-full max-w-md" @submit.prevent="addOrderFunc()">
-            <div class="mb-4 w-full text-left">
-                <label for="name" class="block font-bold mb-1">姓名<span class="text-red-500">*</span></label>
-                <input type="text" id="name" v-model="input.personName" class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" required />
-                <p v-if="showError && !input.personName" class="text-red-500 text-xs mt-1">請輸入姓名</p>
+    <div v-if="showCheckUserIDisExist" class="flex items-center justify-center p-6 min-h-screen">
+        <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+            <div class="text-center mb-6">
+                <div class="text-5xl mb-4">📅</div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">醫療預約</h1>
+                <p class="text-gray-600 text-sm">請填寫您的預約資訊</p>
             </div>
-            <div class="mb-4 w-full text-left">
-                <label for="phone" class="block font-bold mb-1">您的電話號碼<span class="text-red-500">*</span></label>
-                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="text" id="phone" v-model="input.personPhone" required pattern="[0-9]+" />
-                <p v-if="showError && !input.personPhone" class="text-red-500 text-xs mt-1">請輸入電話號碼</p>
-            </div>
-            <div class="mb-4 w-full text-left">
-                <label for="issue" class="block font-bold mb-1">看診問題/備註事項</label>
-                <textarea class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="issue" v-model="input.issue"></textarea>
-            </div>
-            <div class="mb-4 w-full text-left">
-                <label for="doctor" class="block font-bold mb-1">約診醫生</label>
-                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="text" id="doctor" v-model="input.doctor" />
-            </div>
-            <div class="mb-4 w-full text-left">
-                <label for="department" class="block font-bold mb-1">科別<span class="text-red-500">*</span></label>
-                <select class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="department" v-model="input.department" required>
-                    <option value="" disabled>請選擇科別</option>
-                    <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
-                </select>
-                <p v-if="showError && !input.department" class="text-red-500 text-xs mt-1">請選擇科別</p>
-            </div>
-            <div class="mb-4 w-full text-left">
-                <label for="date" class="block font-bold mb-1">就診日<span class="text-red-500">*</span></label>
-                <input class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" type="date" id="date" v-model="input.orderDate" required />
-                <p v-if="showError && !input.orderDate" class="text-red-500 text-xs mt-1">請選擇就診日</p>
-            </div>
-            <div class="mb-4 w-full text-left">
-                <label for="notes" class="block font-bold mb-1">備註欄,或其他您方便約診的時間</label>
-                <textarea class="border border-gray-300 rounded-md p-2 w-full focus:border-blue-500 focus:outline-none" id="notes" v-model="input.notes"></textarea>
-            </div>
-            <button type="submit" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition" :disabled="isSending">
-                <span v-if="isSending">送出中...</span>
-                <span v-else>送出</span>
-            </button>
-        </form>
+            <form class="space-y-5" @submit.prevent="addOrderFunc()">
+                <div>
+                    <label for="name" class="block font-bold text-gray-700 mb-2">
+                        姓名 <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        v-model="input.personName"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        placeholder="請輸入姓名"
+                        required
+                    />
+                    <p v-if="showError && !input.personName" class="text-red-500 text-xs mt-1">請輸入姓名</p>
+                </div>
+                <div>
+                    <label for="phone" class="block font-bold text-gray-700 mb-2">
+                        聯絡電話 <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="phone"
+                        v-model="input.personPhone"
+                        pattern="[0-9]+"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        placeholder="請輸入電話號碼"
+                        required
+                    />
+                    <p v-if="showError && !input.personPhone" class="text-red-500 text-xs mt-1">請輸入電話號碼</p>
+                </div>
+                <div>
+                    <label for="department" class="block font-bold text-gray-700 mb-2">
+                        科別 <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                        id="department"
+                        v-model="input.department"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        required
+                    >
+                        <option value="" disabled>請選擇科別</option>
+                        <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
+                    </select>
+                    <p v-if="showError && !input.department" class="text-red-500 text-xs mt-1">請選擇科別</p>
+                </div>
+                <div>
+                    <label for="date" class="block font-bold text-gray-700 mb-2">
+                        就診日 <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="date"
+                        id="date"
+                        v-model="input.orderDate"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        required
+                    />
+                    <p v-if="showError && !input.orderDate" class="text-red-500 text-xs mt-1">請選擇就診日</p>
+                </div>
+                <div>
+                    <label for="doctor" class="block font-bold text-gray-700 mb-2">約診醫生</label>
+                    <input
+                        type="text"
+                        id="doctor"
+                        v-model="input.doctor"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        placeholder="選填"
+                    />
+                </div>
+                <div>
+                    <label for="issue" class="block font-bold text-gray-700 mb-2">看診問題/備註事項</label>
+                    <textarea
+                        id="issue"
+                        v-model="input.issue"
+                        rows="3"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition resize-none"
+                        placeholder="請描述您的看診問題或備註"
+                    ></textarea>
+                </div>
+                <div>
+                    <label for="notes" class="block font-bold text-gray-700 mb-2">其他備註</label>
+                    <textarea
+                        id="notes"
+                        v-model="input.notes"
+                        rows="3"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition resize-none"
+                        placeholder="您方便約診的時間或其他資訊"
+                    ></textarea>
+                </div>
+                <button
+                    type="submit"
+                    class="w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    :disabled="isSending"
+                >
+                    <span v-if="isSending">⏳ 送出中...</span>
+                    <span v-else>✓ 確認預約</span>
+                </button>
+            </form>
+        </div>
     </div>
     
-    <div v-if="showCheckUserIDisNotExist" class="flex items-center justify-center flex-col p-10 text-center">
-        <h1 class="text-2xl font-bold text-center">您尚未設定本裝置</h1>
-        <button @click="$router.push('/')">前往設定</button>
+    <div v-if="showCheckUserIDisNotExist" class="flex items-center justify-center p-6 min-h-screen">
+        <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
+            <div class="mb-6">
+                <div class="text-6xl mb-4">🔒</div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">尚未設定裝置</h1>
+                <p class="text-gray-600 text-sm">您需要先完成裝置設定才能使用預約功能</p>
+            </div>
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 text-left">
+                <p class="text-sm text-gray-700">⚠️ 請先綁定您的身分證號碼</p>
+                <p class="text-sm text-gray-700 mt-1">完成設定後即可進行預約</p>
+            </div>
+            <button
+                @click="$router.push('/')"
+                class="w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
+            >
+                前往設定
+            </button>
+        </div>
     </div>
 
-    <div v-if="finishOrder" class="flex items-center justify-center flex-col p-10 text-center">
-        <p>已完成預約</p>
-        <button @click="$emit('close-window')" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">確認</button>
+    <div v-if="finishOrder" class="flex items-center justify-center p-6 min-h-screen">
+        <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
+            <div class="mb-6">
+                <div class="text-6xl mb-4">✅</div>
+                <h2 class="text-2xl font-bold text-green-600 mb-2">預約成功！</h2>
+                <p class="text-gray-700">您的預約已送出</p>
+            </div>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 text-left">
+                <p class="text-sm text-gray-700">✓ 我們已收到您的預約申請</p>
+                <p class="text-sm text-gray-700 mt-2">診所將盡快與您聯繫確認預約時間</p>
+            </div>
+            <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                <p class="text-sm text-gray-600">如有任何問題，請直接聯繫診所</p>
+            </div>
+            <button
+                @click="$emit('close-window')"
+                class="w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
+            >
+                關閉視窗
+            </button>
+        </div>
     </div>
 
 </template>
