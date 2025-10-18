@@ -8,22 +8,23 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4  # 更新這一行
+      uses: actions/checkout@v4
 
     - name: Install & Build
       run: |
         npm install
-        npm run build 
-      
+        npm run build
+
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4.6.0
       with:
-        branch: gh-pages 
+        branch: gh-pages
         folder: dist
-        token: ${{ secrets.ACCESS_TOKEN }}
 
        
