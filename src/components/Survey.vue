@@ -79,7 +79,6 @@ const finishAddVIPPersonID= ref(false);
 
 const checkVIPisExist = () => {
     const formData = new FormData();
-    formData.append('method', 'checkVIPisExist');
     formData.append('personid', personID.value);
     formData.append('userid', user.userid);
 
@@ -87,7 +86,7 @@ const checkVIPisExist = () => {
     showCheckUserIDisNotExist.value = false;
     axios({
         method: 'post',
-        url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/check_person_exists',
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' }
     }) 
@@ -121,9 +120,9 @@ const addPersonVIP = () => {
     checkUserVIPisExist.value = false;
     axios({
         method: 'post',
-        url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/add_person_vip',
         data: formData,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        headers: { 'Content-Type': 'multipart/form-data' }
     })
     .then(response => {
         console.log(response.data);
@@ -155,7 +154,7 @@ const addPersonIDFunc = () => {
     addPersonID.value = false;
     axios({
         method: 'post',
-        url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/add_person_info',
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' }
     }) 
@@ -175,15 +174,14 @@ const addPersonIDFunc = () => {
 
 const checkUserIDisExistFunc = () => {
     const formData = new FormData();
-    formData.append('method', 'checkUserIDisExist');
-    formData.append('userid', user.userid);   
-    // formData.append('userid', 'U026dd072b34c71593f4fb6d1176d2c20');     
-    
+    formData.append('userid', user.userid);
+    // formData.append('userid', 'U026dd072b34c71593f4fb6d1176d2c20');
+
     axios({
         method: 'post',
-        url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/check_user_registered',
         data: formData,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        headers: { 'Content-Type': 'multipart/form-data' }
     })
     .then(response => {
         if(response.data.result === "useridisexist"){
