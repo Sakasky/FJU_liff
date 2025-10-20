@@ -8,6 +8,10 @@ const routes = [
     path: "/order",
     component: () => import("/src/views/OrderView.vue")
   },
+  {
+    path: "/orderv2",
+    component: () => import("/src/views/OrderViewV2.vue")
+  },
 
 
 ];

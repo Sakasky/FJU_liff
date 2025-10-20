@@ -159,7 +159,7 @@
                 <p class="text-gray-700">若需要預約請點擊下方按鈕</p>
                 <a
                     class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
-                    href="https://liff.line.me/1657869644-Z9PmDXzq"
+                    href="https://liff.line.me/1657869644-x3BZd5wE"
                 >
                     前往預約
                 </a>
