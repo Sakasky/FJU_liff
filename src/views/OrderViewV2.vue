@@ -11,7 +11,7 @@ const userdataEmail = ref(null);
 onMounted(async () => {
   liff
   .init({
-    liffId: "1657869644-x3BZd5wE", // 使用相同的 LIFF ID (測試用)
+    liffId: "1657869644-z0PLNaQD", // 使用相同的 LIFF ID (測試用)
   })
   .then(() => {
     if(liff.isLoggedIn()){
