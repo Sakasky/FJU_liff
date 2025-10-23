@@ -24,9 +24,10 @@
                 </button>
                 <button
                     @click="selectBookingType('family')"
-                    class="w-full bg-green-500 text-white px-6 py-4 rounded-md hover:bg-green-600 transition font-medium shadow-sm text-lg"
+                    class="w-full bg-gray-300 text-gray-500 px-6 py-4 rounded-md cursor-not-allowed transition font-medium shadow-sm text-lg opacity-60"
+                    title="此功能尚未開放"
                 >
-                    👨‍👩‍👧‍👦 家屬預約
+                    👨‍👩‍👧‍👦 家屬預約 (尚未開放)
                 </button>
             </div>
         </div>
@@ -97,9 +98,9 @@
                         id="name"
                         v-model="input.personName"
                         class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
-                        :class="{ 'bg-gray-100': bookingType !== null }"
+                        :class="{ 'bg-gray-100': bookingType === 'self' }"
                         placeholder="請輸入姓名"
-                        :readonly="bookingType !== null"
+                        :readonly="bookingType === 'self'"
                         required
                     />
                     <p v-if="showError && !input.personName" class="text-red-500 text-xs mt-1">請輸入姓名</p>
@@ -114,9 +115,9 @@
                         v-model="input.personPhone"
                         pattern="[0-9]+"
                         class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
-                        :class="{ 'bg-gray-100': bookingType !== null }"
+                        :class="{ 'bg-gray-100': bookingType === 'self' }"
                         placeholder="請輸入電話號碼"
-                        :readonly="bookingType !== null"
+                        :readonly="bookingType === 'self'"
                         required
                     />
                     <p v-if="showError && !input.personPhone" class="text-red-500 text-xs mt-1">請輸入電話號碼</p>
@@ -256,7 +257,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
+import axios from 'axios';
 
 const user = defineProps(['userid'])
 const res = ref(null)
@@ -278,19 +280,12 @@ const bookingType = ref(null);
 const selectedFamily = ref('');
 const personID = ref('');
 
-// Mock Data - Family Members (最多5位)
-const familyMembers = ref([
-    { id: 1, name: '王小明', phone: '0912345678' },
-    { id: 2, name: '王小華', phone: '0923456789' },
-    { id: 3, name: '王小美', phone: '0934567890' },
-    { id: 4, name: '王小強', phone: '0945678901' },
-    { id: 5, name: '王小芳', phone: '0956789012' }
-]);
-
-// Mock Data - Personal Info (for self booking)
-const personalInfo = ref({
-    name: '張大明',
-    phone: '0987654321'
+// User and family data from API
+const userData = ref({
+    personid: '',
+    personname: '',
+    personphone: '',
+    family_members: []
 });
 
 // Department Data
@@ -348,9 +343,9 @@ const selectBookingType = (type) => {
     showBookingTypeSelection.value = false;
 
     if (type === 'self') {
-        // 個人預約：帶入個人資料
-        input.value.personName = personalInfo.value.name;
-        input.value.personPhone = personalInfo.value.phone;
+        // 個人預約：帶入本人資料
+        input.value.personName = userData.value.personname;
+        input.value.personPhone = userData.value.personphone;
         showCheckUserIDisExist.value = true;
     } else if (type === 'family') {
         // 家屬預約：顯示家屬選單
@@ -403,17 +398,6 @@ const addOrderFunc = () => {
 
         // Simulate API delay
         setTimeout(() => {
-            console.log('=== 測試模式：預約資料 ===');
-            console.log('預約類型:', bookingType.value === 'self' ? '個人預約' : '家屬預約');
-            console.log('姓名:', input.value.personName);
-            console.log('電話:', input.value.personPhone);
-            console.log('科別:', input.value.department);
-            console.log('就診日:', input.value.orderDate);
-            console.log('醫生:', input.value.doctor);
-            console.log('問題:', input.value.issue);
-            console.log('備註:', input.value.notes);
-            console.log('======================');
-
             isSending.value = false;
             showCheckUserIDisExist.value = false;
             finishOrder.value = true;
@@ -422,36 +406,61 @@ const addOrderFunc = () => {
 };
 
 const checkUserIDisExistFunc = () => {
-    // Mock API call - simulate user exists
-    setTimeout(() => {
-        console.log('=== 測試模式：檢查使用者 ===');
-        console.log('UserID:', user.userid);
+    const params = new URLSearchParams();
+    params.append('userid', user.userid);
 
-        // 模擬使用者已註冊
-        const userExists = true;
+    axios({
+        method: 'post',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/order_get_user_registered',
+        data: params,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+    .then(response => {
+        console.log(response);
+        const data = response.data;
 
-        if (userExists) {
-            personID.value = 'A123456789'; // Mock ID
+        if(data.status === "success" && data.result === "success"){
+            // 使用者已註冊且有基本資料
+            userData.value = {
+                personid: data.personid,
+                personname: data.personname,
+                personphone: data.personphone,
+                family_members: data.family_members || []
+            };
+            personID.value = data.personid;
+            res.value = data;
             showBookingTypeSelection.value = true;
-        } else {
+            idPending.value = false;
+        } else if(data.result === "useridnotexist"){
+            // LINE ID 不存在，需要綁定
+            showBookingTypeSelection.value = false;
             showCheckUserIDisNotExist.value = true;
+            idPending.value = false;
+            res.value = data;
+        } else if(data.result === "personidnotexist"){
+            // 基本資料不存在，需重新綁定
+            idPending.value = false;
+            alert(data.message || "請重新綁定或聯絡診所");
+            showCheckUserIDisNotExist.value = true;
+            res.value = data;
+        } else if(data.status === "error"){
+            // 錯誤回應
+            idPending.value = false;
+            alert("系統錯誤: " + (data.message || "請稍後再試"));
+            res.value = data;
         }
-
+    })
+    .catch(error => {
+        console.log(error);
         idPending.value = false;
-        console.log('======================');
-    }, 1000);
+        alert("連線錯誤，請檢查網路連線或稍後再試");
+        res.value = error.response?.data || error;
+    });
 };
 
 // Watch for userid changes
 watch(user, (newValue, oldValue) => {
-    
     console.log("user.userid", user.userid);
     checkUserIDisExistFunc();
-});
-
-onMounted(() => {
-    console.log("Mounted - user.userid", user.userid);
-    checkUserIDisExistFunc();
-    idPending.value = false;
 });
 </script>
