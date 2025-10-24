@@ -54,7 +54,7 @@
                     >
                         <option value="" disabled>請選擇家屬</option>
                         <option v-for="member in userData.family_members" :key="member.id" :value="member">
-                            {{ member.name }}
+                            {{ member }}
                         </option>
                     </select>
                 </div>
