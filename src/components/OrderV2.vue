@@ -100,7 +100,6 @@
                         class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
                         :class="{ 'bg-gray-100': bookingType === 'self' }"
                         placeholder="請輸入姓名"
-                        :readonly="bookingType === 'self'"
                         required
                     />
                     <p v-if="showError && !input.personName" class="text-red-500 text-xs mt-1">請輸入姓名</p>
@@ -117,7 +116,6 @@
                         class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
                         :class="{ 'bg-gray-100': bookingType === 'self' }"
                         placeholder="請輸入電話號碼"
-                        :readonly="bookingType === 'self'"
                         required
                     />
                     <p v-if="showError && !input.personPhone" class="text-red-500 text-xs mt-1">請輸入電話號碼</p>
