@@ -379,8 +379,7 @@ const backToTypeSelection = () => {
 
 const addOrderFunc = () => {
     showError.value = false;
-
-    // Validate required fields
+    // 必填欄位檢查
     if (!input.value.personName || !input.value.personPhone || !input.value.department || !input.value.orderDate) {
         showError.value = true;
         return;
@@ -390,16 +389,41 @@ const addOrderFunc = () => {
         clearTimeout(addOrderTimer);
     }
 
-    // Mock API call with setTimeout (測試模式)
     addOrderTimer = setTimeout(() => {
+        const params = new URLSearchParams();
+        params.append('method', 'addOrder');
+        params.append('userid', user.userid);
+        params.append('personName', input.value.personName);
+        params.append('issue', input.value.issue);
+        params.append('doctor', input.value.doctor);
+        params.append('personPhone', input.value.personPhone);
+        params.append('department', input.value.department);
+        params.append('orderDate', input.value.orderDate);
+        params.append('notes', input.value.notes || '');
         isSending.value = true;
 
-        // Simulate API delay
-        setTimeout(() => {
+        axios({
+            method: 'post',
+            url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
+            data: params,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(response => {
             isSending.value = false;
+            res.value = response.data;
+            idPending.value = false;
             showCheckUserIDisExist.value = false;
             finishOrder.value = true;
-        }, 1500);
+        })
+        .catch(error => {
+            isSending.value = false;
+            let msg = "預約失敗，請稍後再試或聯絡診所";
+            if (error.response?.data) {
+                msg = error.response.data.message;
+            }
+            alert(msg);
+            console.log(error);
+        });
     }, 2000);
 };
 
