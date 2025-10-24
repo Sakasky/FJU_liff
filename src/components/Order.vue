@@ -88,6 +88,7 @@
                         rows="3"
                         class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition resize-none"
                         placeholder="請描述您的看診問題或備註"
+                        required
                     ></textarea>
                 </div>
                 <div>
