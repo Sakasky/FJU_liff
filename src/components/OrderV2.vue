@@ -407,7 +407,8 @@ const addOrderFunc = () => {
             method: 'post',
             url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
             data: params,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: 15000
         })
         .then(response => {
             isSending.value = false;
@@ -419,7 +420,9 @@ const addOrderFunc = () => {
         .catch(error => {
             isSending.value = false;
             let msg = "預約失敗，請稍後再試或聯絡診所";
-            if (error.response?.data) {
+            if (error.code === 'ECONNABORTED') {
+                msg = "連線逾時，請檢查網路連線後再試";
+            } else if (error.response?.data) {
                 msg = error.response.data.message;
             }
             alert(msg);
@@ -436,7 +439,8 @@ const checkUserIDisExistFunc = () => {
         method: 'post',
         url: 'https://fju-line-app.herokuapp.com/infolinebot/order_get_user_registered',
         data: params,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 15000
     })
     .then(response => {
         console.log(response);
@@ -474,9 +478,13 @@ const checkUserIDisExistFunc = () => {
         }
     })
     .catch(error => {
-        console.log(error);
         idPending.value = false;
-        alert("連線錯誤，請檢查網路連線或稍後再試");
+        if (error.code === 'ECONNABORTED') {
+            alert('連線逾時，請檢查網路連線後再試');
+        } else {
+            alert('連線錯誤，請檢查網路連線或稍後再試');
+        }
+        console.log(error);
         res.value = error.response?.data || error;
     });
 };

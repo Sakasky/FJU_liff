@@ -258,7 +258,8 @@ const addOrderFunc = () => {
             method: 'post',
             url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
             data: params,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: 15000
         }) 
         .then(response => {
             isSending.value = false;
@@ -268,8 +269,11 @@ const addOrderFunc = () => {
             finishOrder.value = true;
         })
         .catch(error => {
+            isSending.value = false;
             let msg = "預約失敗，請稍後再試或聯絡診所";
-            if ( error.response.data) {
+            if (error.code === 'ECONNABORTED') {
+                msg = "連線逾時，請檢查網路連線後再試";
+            } else if (error.response?.data) {
                 msg = error.response.data.message;
             }
             alert(msg);
@@ -288,7 +292,8 @@ const checkUserIDisExistFunc = () => {
         method: 'post',
         url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
         data: formData,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        timeout: 15000
     })
     .then(response => {
         console.log(response);
@@ -307,9 +312,14 @@ const checkUserIDisExistFunc = () => {
         // Handle the response here
     })
     .catch(error => {
+        idPending.value = false;
+        if (error.code === 'ECONNABORTED') {
+            alert('連線逾時，請檢查網路連線後再試');
+        } else {
+            alert('系統錯誤，請稍後再試');
+        }
         console.log(error);
         res.value = error.data;
-        // Handle the error here
     });
 }
 

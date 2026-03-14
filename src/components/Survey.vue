@@ -186,7 +186,7 @@
                 <p class="text-gray-700">若需要預約請點擊下方按鈕</p>
                 <a
                     class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
-                    href="https://liff.line.me/1657869644-Z9PmDXzq"
+                    href="https://liff.line.me/1657869644-x3BZd5wE"
                 >
                     前往預約
                 </a>
@@ -240,7 +240,8 @@ const checkVIPisExist = () => {
         method: 'post',
         url: 'https://fju-line-app.herokuapp.com/infolinebot/check_vip',
         data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 15000
     }) 
     .then(response => {
         console.log("response",response);
@@ -254,10 +255,16 @@ const checkVIPisExist = () => {
             checkUserVIPisExist.value = false;
             addPersonID.value = true;
         }
-        
+
     })
     .catch(error => {
-        // Handle the error here
+        idPending.value = false;
+        showCheckUserIDisNotExist.value = true;
+        if (error.code === 'ECONNABORTED') {
+            alert('連線逾時，請檢查網路連線後再試');
+        } else {
+            alert('驗證失敗，請稍後再試');
+        }
         console.log(error);
     });
 }
@@ -274,16 +281,23 @@ const addPersonVIP = () => {
         method: 'post',
         url: 'https://fju-line-app.herokuapp.com/infolinebot/add_person_vip',
         data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 15000
     })
     .then(response => {
         console.log(response.data);
         idPending.value = false;
         finishAddVIPPersonID.value = true;
-        
+
     })
     .catch(error => {
-        // Handle the error here
+        idPending.value = false;
+        checkUserVIPisExist.value = true;
+        if (error.code === 'ECONNABORTED') {
+            alert('連線逾時，請檢查網路連線後再試');
+        } else {
+            alert('綁定失敗，請稍後再試');
+        }
         console.log(error);
     });
     
@@ -308,18 +322,25 @@ const addPersonIDFunc = () => {
         method: 'post',
         url: 'https://fju-line-app.herokuapp.com/infolinebot/add_person_info',
         data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
-    }) 
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 15000
+    })
     .then(response => {
         res.value = response.data;
         // Handle the response here
         console.log(response);
         idPending.value = false;
         finishAddPersonID.value = true;
-        
+
     })
     .catch(error => {
-        // Handle the error here
+        idPending.value = false;
+        addPersonID.value = true;
+        if (error.code === 'ECONNABORTED') {
+            alert('連線逾時，請檢查網路連線後再試');
+        } else {
+            alert('註冊失敗，請稍後再試');
+        }
         console.log(error);
     });
 }
@@ -333,7 +354,8 @@ const checkUserIDisExistFunc = () => {
         method: 'post',
         url: 'https://fju-line-app.herokuapp.com/infolinebot/check_user_registered',
         data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 15000
     })
     .then(response => {
         if(response.data.result === "useridisexist"){
@@ -352,9 +374,15 @@ const checkUserIDisExistFunc = () => {
         // Handle the response here
     })
     .catch(error => {
+        idPending.value = false;
+        showCheckUserIDisNotExist.value = true;
+        if (error.code === 'ECONNABORTED') {
+            alert('連線逾時，請檢查網路連線後再試');
+        } else {
+            alert('系統錯誤，請稍後再試');
+        }
         console.log(error);
         res.value = error.data;
-        // Handle the error here
     });
 }
 
