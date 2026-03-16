@@ -1,9 +1,10 @@
 <script setup>
 import liff from "@line/liff";
 import { onMounted, ref, provide } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 
 const isLogin = ref(false);
 const userdataUID = ref(null);
@@ -16,13 +17,15 @@ provide("userdataUID", userdataUID);
 provide("isLogin", isLogin);
 provide("closeWindow", closeWindow);
 
-const liffIdMap = {
-  '/order': '1657869644-x3BZd5wE',
-};
-const liffId = liffIdMap[route.path] || '1657869644-jDxqpoMV';
-
 onMounted(async () => {
-  console.log('[App] onMounted - 開始 LIFF 初始化, path:', route.path, 'liffId:', liffId);
+  await router.isReady();
+
+  const liffIdMap = {
+    '/order': '1657869644-x3BZd5wE',
+  };
+  const liffId = liffIdMap[route.path] || '1657869644-jDxqpoMV';
+
+  console.log('[App] onMounted - path:', route.path, 'liffId:', liffId);
   liff
     .init({
       liffId,
