@@ -346,6 +346,7 @@ const addPersonIDFunc = () => {
 }
 
 const checkUserIDisExistFunc = () => {
+    console.log("[Survey] checkUserIDisExistFunc 被呼叫, userid:", user.userid);
     const formData = new FormData();
     formData.append('userid', user.userid);
     // formData.append('userid', 'U026dd072b34c71593f4fb6d1176d2c20');
@@ -358,6 +359,7 @@ const checkUserIDisExistFunc = () => {
         timeout: 15000
     })
     .then(response => {
+        console.log("[Survey] API 回應:", response.data);
         if(response.data.result === "useridisexist"){
             personID.value = response.data.personid;
             res.value = response.data;
@@ -366,7 +368,7 @@ const checkUserIDisExistFunc = () => {
         }else{
             showCheckUserIDisExist.value = false;
             showCheckUserIDisNotExist.value = true;
-            
+
             res.value = response.data;
         }
 
@@ -374,6 +376,7 @@ const checkUserIDisExistFunc = () => {
         // Handle the response here
     })
     .catch(error => {
+        console.error("[Survey] API 錯誤:", error);
         idPending.value = false;
         showCheckUserIDisNotExist.value = true;
         if (error.code === 'ECONNABORTED') {
@@ -393,7 +396,7 @@ const closePop=()=>{
 //     checkUserIDisExistFunc();
 // });
 watch(user, (newValue, oldValue) => {
-    console.log("user.userid",user.userid);
+    console.log("[Survey] watch 觸發, userid:", user.userid);
     checkUserIDisExistFunc();
 });
 </script>

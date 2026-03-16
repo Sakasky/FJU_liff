@@ -283,10 +283,11 @@ const addOrderFunc = () => {
 }
 
 const checkUserIDisExistFunc = () => {
+    console.log("[Order] checkUserIDisExistFunc 被呼叫, userid:", user.userid);
     const formData = new FormData();
     formData.append('method', 'checkUserIDisExist');
-    formData.append('userid', user.userid);   
-    //formData.append('userid', 'U14b5e7710fe33928351643793294dc3c');     
+    formData.append('userid', user.userid);
+    //formData.append('userid', 'U14b5e7710fe33928351643793294dc3c');
     console.log(formData.get('userid'))
     axios({
         method: 'post',
@@ -296,7 +297,7 @@ const checkUserIDisExistFunc = () => {
         timeout: 15000
     })
     .then(response => {
-        console.log(response);
+        console.log("[Order] API 回應:", response.data);
         if(response.data.result === "useridisexist"){
             personID.value = response.data.personid;
             res.value = response.data;
@@ -304,7 +305,7 @@ const checkUserIDisExistFunc = () => {
         }else{
             showCheckUserIDisExist.value = false;
             showCheckUserIDisNotExist.value = true;
-            
+
             res.value = response.data;
         }
 
@@ -312,6 +313,7 @@ const checkUserIDisExistFunc = () => {
         // Handle the response here
     })
     .catch(error => {
+        console.error("[Order] API 錯誤:", error);
         idPending.value = false;
         if (error.code === 'ECONNABORTED') {
             alert('連線逾時，請檢查網路連線後再試');
@@ -330,7 +332,7 @@ const closePop=()=>{
 //     checkUserIDisExistFunc();
 // });
 watch(user, (newValue, oldValue) => {
-    console.log("user.userid",user.userid);
+    console.log("[Order] watch 觸發, userid:", user.userid);
     checkUserIDisExistFunc();
 });
 </script>
