@@ -19,7 +19,7 @@
             <p class="text-gray-600 text-sm mb-6">如需修改請洽本診所</p>
             <div class="border-t pt-6">
                 <p class="text-gray-700 mb-3">若需要預約請填寫</p>
-                <button @click="window.location.href='https://liff.line.me/1657869644-x3BZd5wE'" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium">前往預約</button>
+                <a href="https://liff.line.me/1657869644-x3BZd5wE" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium">前往預約</a>
             </div>
         </div>
     </div>
@@ -157,12 +157,12 @@
             </div>
             <div class="border-t pt-6 space-y-4">
                 <p class="text-gray-700">若需要預約請點擊下方按鈕</p>
-                <button
-                    @click="window.location.href='https://liff.line.me/1657869644-x3BZd5wE'"
-                    class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
+                <a
+                    href="https://liff.line.me/1657869644-x3BZd5wE"
+                    class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm text-center"
                 >
                     前往預約
-                </button>
+                </a>
                 <button
                     @click="$emit('close-window')"
                     class="w-full bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition font-medium"
@@ -184,12 +184,12 @@
             </div>
             <div class="border-t pt-6 space-y-4">
                 <p class="text-gray-700">若需要預約請點擊下方按鈕</p>
-                <button
-                    @click="window.location.href='https://liff.line.me/1657869644-x3BZd5wE'"
-                    class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
+                <a
+                    href="https://liff.line.me/1657869644-x3BZd5wE"
+                    class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm text-center"
                 >
                     前往預約
-                </button>
+                </a>
                 <button
                     @click="$emit('close-window')"
                     class="w-full bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition font-medium"
@@ -397,6 +397,7 @@ const closePop=()=>{
 // });
 watch(user, (newValue, oldValue) => {
     console.log("[Survey] watch 觸發, userid:", user.userid);
+    if (!user.userid) return;
     checkUserIDisExistFunc();
-});
+}, { immediate: true });
 </script>

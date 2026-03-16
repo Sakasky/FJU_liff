@@ -1,9 +1,23 @@
 <script setup>
-import { inject } from "vue";
+import liff from "@line/liff";
+import { onMounted, ref } from "vue";
 import Survey from "../components/Survey.vue";
 
-const userdataUID = inject("userdataUID");
-const closeWindow = inject("closeWindow");
+const userdataUID = ref(null);
+
+onMounted(async () => {
+  liff.init({ liffId: "1657869644-jDxqpoMV" })
+    .then(() => {
+      if (liff.isLoggedIn()) {
+        userdataUID.value = liff.getDecodedIDToken().sub;
+      }
+    })
+    .catch((err) => {
+      console.error('[Home] LIFF init 失敗:', err.code, err.message);
+    });
+});
+
+const closeWindow = () => { liff.closeWindow(); };
 </script>
 
 <template>
