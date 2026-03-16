@@ -334,5 +334,5 @@ const closePop=()=>{
 watch(user, (newValue, oldValue) => {
     console.log("[Order] watch 觸發, userid:", user.userid);
     checkUserIDisExistFunc();
-});
+}, { immediate: true });
 </script>
