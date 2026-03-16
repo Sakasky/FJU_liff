@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
 import routerMap from "./router.js";
 
-const base = "/";
-
 const router = createRouter({
-  history: createWebHistory(base),
+  history: createWebHashHistory(),
   routes: routerMap.routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
