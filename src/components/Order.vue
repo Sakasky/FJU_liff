@@ -165,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref,onMounted, watch, shallowReactive } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
 
 const user = defineProps(['userid'])
@@ -178,12 +178,7 @@ const personID = ref('');
 
 const showCheckUserIDisExist = ref(false);
 const showCheckUserIDisNotExist = ref(false);
-const checkUserVIPisExist = ref(false);
 const idPending = ref(true);
-const checkUserIDisExist = ref(false);
-const addPersonID= ref(false);
-const finishAddPersonID= ref(false);
-const finishAddVIPPersonID= ref(false);
 const isSending = ref(false);
 const finishOrder = ref(false);
 const department_data = [
@@ -280,6 +275,7 @@ const addOrderFunc = () => {
             if (error.code === 'ECONNABORTED') {
                 orderError.value = '連線逾時，請檢查網路後再試';
             } else if (backendMsg === '找不到使用者資料，請先完成基本資料填寫') {
+                orderError.value = '';
                 // 引導重新設定
                 showCheckUserIDisExist.value = false;
                 showCheckUserIDisNotExist.value = true;
@@ -332,9 +328,6 @@ const checkUserIDisExistFunc = () => {
     });
 }
 
-const closePop=()=>{
-    $emit('close-window');
-}
 // onMounted(() => {
 //     checkUserIDisExistFunc();
 // });
