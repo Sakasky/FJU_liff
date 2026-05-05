@@ -185,7 +185,7 @@
         <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
             <div class="mb-6">
                 <div class="text-6xl mb-4">✅</div>
-                <h2 class="text-2xl font-bold text-green-600 mb-2">綁定成功！</h2>
+                <h2 class="text-2xl font-bold text-green-600 mb-2">{{ vipName }} 綁定成功！</h2>
                 <p class="text-gray-700">本裝置已完成綁定</p>
             </div>
             <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
@@ -238,6 +238,7 @@ const addPersonID= ref(false);
 const finishAddPersonID= ref(false);
 const finishAddVIPPersonID= ref(false);
 const errorMsg = ref('');
+const vipName = ref('');
 
 const checkVIPisExist = () => {
     errorMsg.value = '';
@@ -297,10 +298,9 @@ const addPersonVIP = () => {
         timeout: 15000
     })
     .then(response => {
-        console.log(response.data);
         idPending.value = false;
+        vipName.value = response.data?.data?.name || personName.value;
         finishAddVIPPersonID.value = true;
-
     })
     .catch(error => {
         idPending.value = false;
