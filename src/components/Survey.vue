@@ -219,11 +219,10 @@
 </template>
 
 <script setup>
-import { ref,onMounted, watch, shallowReactive } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
 
 const user = defineProps(['userid'])
-const res = ref(null)
 
 console.log("userID",user);
 const personID = ref('');
@@ -233,7 +232,6 @@ const showCheckUserIDisExist = ref(false);
 const showCheckUserIDisNotExist = ref(false);
 const checkUserVIPisExist = ref(false);
 const idPending = ref(true);
-const checkUserIDisExist = ref(false);
 const addPersonID= ref(false);
 const finishAddPersonID= ref(false);
 const finishAddVIPPersonID= ref(false);
@@ -305,9 +303,13 @@ const addPersonVIP = () => {
     .catch(error => {
         idPending.value = false;
         checkUserVIPisExist.value = true;
-        errorMsg.value = error.code === 'ECONNABORTED'
-            ? '連線逾時，請檢查網路後再試'
-            : (error.response?.data?.message || '綁定失敗，請稍後再試');
+        if (error.code === 'ECONNABORTED') {
+            errorMsg.value = '連線逾時，請檢查網路後再試';
+        } else if (error.response?.status === 500) {
+            errorMsg.value = '系統錯誤，請稍後再試';
+        } else {
+            errorMsg.value = error.response?.data?.message || '綁定失敗，請稍後再試';
+        }
         console.log(error);
     });
     
@@ -336,7 +338,6 @@ const addPersonIDFunc = () => {
         timeout: 15000
     })
     .then(response => {
-        res.value = response.data;
         // Handle the response here
         console.log(response);
         idPending.value = false;
@@ -377,14 +378,11 @@ const checkUserIDisExistFunc = () => {
         console.log("[Survey] API 回應:", response.data);
         if(response.data.result === "useridisexist"){
             personID.value = response.data.personid;
-            res.value = response.data;
             console.log("personID",personID);
             showCheckUserIDisExist.value = true;
         }else{
             showCheckUserIDisExist.value = false;
             showCheckUserIDisNotExist.value = true;
-
-            res.value = response.data;
         }
 
         idPending.value = false;
@@ -398,13 +396,9 @@ const checkUserIDisExistFunc = () => {
             ? '連線逾時，請檢查網路後再試'
             : '系統錯誤，請稍後再試';
         console.log(error);
-        res.value = error.data;
     });
 }
 
-const closePop=()=>{
-    $emit('close-window');
-}
 // onMounted(() => {
 //     checkUserIDisExistFunc();
 // });
