@@ -52,6 +52,9 @@
                     />
                     <p class="text-xs text-gray-500 mt-1">請使用大寫英文字母</p>
                 </div>
+                <div v-if="errorMsg" class="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
+                    <p class="text-sm text-red-700">{{ errorMsg }}</p>
+                </div>
                 <button type="submit" class="w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm">
                     送出驗證
                 </button>
@@ -83,6 +86,9 @@
                 >
                     ✗ 不是
                 </button>
+            </div>
+            <div v-if="errorMsg" class="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
+                <p class="text-sm text-red-700">{{ errorMsg }}</p>
             </div>
         </div>
     </div>
@@ -124,6 +130,9 @@
                         title="請輸入聯絡電話"
                         required
                     />
+                </div>
+                <div v-if="errorMsg" class="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
+                    <p class="text-sm text-red-700">{{ errorMsg }}</p>
                 </div>
                 <div class="flex gap-3 pt-4">
                     <button
@@ -228,8 +237,10 @@ const checkUserIDisExist = ref(false);
 const addPersonID= ref(false);
 const finishAddPersonID= ref(false);
 const finishAddVIPPersonID= ref(false);
+const errorMsg = ref('');
 
 const checkVIPisExist = () => {
+    errorMsg.value = '';
     const formData = new FormData();
     formData.append('personid', personID.value);
     formData.append('userid', user.userid);
@@ -245,31 +256,33 @@ const checkVIPisExist = () => {
     }) 
     .then(response => {
         console.log("response",response);
-        if(response.data.result === "personidisexist"){
-            res.value = response.data;
+        errorMsg.value = '';
+        if (response.data.result === "personidisexist") {
             idPending.value = false;
             checkUserVIPisExist.value = true;
             personName.value = response.data.personname;
-        }else{
+        } else if (response.data.result === "personidnotexist") {
             idPending.value = false;
-            checkUserVIPisExist.value = false;
             addPersonID.value = true;
+        } else {
+            // edge case: is_vip=false 但無 result（VIP 表為空等情況）
+            idPending.value = false;
+            showCheckUserIDisNotExist.value = true;
+            errorMsg.value = response.data.message || '系統資料讀取失敗，請聯繫診所';
         }
-
     })
     .catch(error => {
         idPending.value = false;
         showCheckUserIDisNotExist.value = true;
-        if (error.code === 'ECONNABORTED') {
-            alert('連線逾時，請檢查網路連線後再試');
-        } else {
-            alert('驗證失敗，請稍後再試');
-        }
+        errorMsg.value = error.code === 'ECONNABORTED'
+            ? '連線逾時，請檢查網路後再試'
+            : (error.response?.data?.message || '驗證失敗，請稍後再試');
         console.log(error);
     });
 }
 
 const addPersonVIP = () => {
+    errorMsg.value = '';
     const formData = new FormData();
     formData.append('method', 'addPersonVIP');
     formData.append('personid', personID.value);
@@ -304,7 +317,7 @@ const addPersonVIP = () => {
 }
 
 const addPersonIDFunc = () => {
-
+    errorMsg.value = '';
     if(!personName.value || !personPhone.value){
         alert("請輸入姓名與電話");
         return;
@@ -346,6 +359,7 @@ const addPersonIDFunc = () => {
 }
 
 const checkUserIDisExistFunc = () => {
+    errorMsg.value = '';
     console.log("[Survey] checkUserIDisExistFunc 被呼叫, userid:", user.userid);
     const formData = new FormData();
     formData.append('userid', user.userid);
@@ -379,11 +393,9 @@ const checkUserIDisExistFunc = () => {
         console.error("[Survey] API 錯誤:", error);
         idPending.value = false;
         showCheckUserIDisNotExist.value = true;
-        if (error.code === 'ECONNABORTED') {
-            alert('連線逾時，請檢查網路連線後再試');
-        } else {
-            alert('系統錯誤，請稍後再試');
-        }
+        errorMsg.value = error.code === 'ECONNABORTED'
+            ? '連線逾時，請檢查網路後再試'
+            : '系統錯誤，請稍後再試';
         console.log(error);
         res.value = error.data;
     });
