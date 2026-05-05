@@ -109,6 +109,9 @@
                     <span v-if="isSending">⏳ 送出中...</span>
                     <span v-else>✓ 確認預約</span>
                 </button>
+                <div v-if="orderError" class="bg-red-50 border-l-4 border-red-500 p-4 mt-3">
+                    <p class="text-sm text-red-700">{{ orderError }}</p>
+                </div>
             </form>
         </div>
     </div>
@@ -166,8 +169,6 @@ import { ref,onMounted, watch, shallowReactive } from 'vue';
 import axios from 'axios';
 
 const user = defineProps(['userid'])
-const res = ref(null)
-
 // const user = {
 //     userid: 'U14b5e7710fe33928351643793294dc3c'
 // }
@@ -232,9 +233,11 @@ const input = ref({
 let addOrderTimer = null;
 const showError = ref(false);
 const errorMsg = ref('');
+const orderError = ref('');
 
 const addOrderFunc = () => {
     showError.value = false;
+    orderError.value = '';
     // 必填欄位檢查
     if (!input.value.personName || !input.value.personPhone || !input.value.department || !input.value.orderDate) {
         showError.value = true;
@@ -267,20 +270,25 @@ const addOrderFunc = () => {
         }) 
         .then(response => {
             isSending.value = false;
-            res.value = response.data;
             idPending.value = false;
             showCheckUserIDisExist.value = false;
             finishOrder.value = true;
         })
         .catch(error => {
             isSending.value = false;
-            let msg = "預約失敗，請稍後再試或聯絡診所";
+            const backendMsg = error.response?.data?.message;
             if (error.code === 'ECONNABORTED') {
-                msg = "連線逾時，請檢查網路連線後再試";
-            } else if (error.response?.data) {
-                msg = error.response.data.message;
+                orderError.value = '連線逾時，請檢查網路後再試';
+            } else if (backendMsg === '找不到使用者資料，請先完成基本資料填寫') {
+                // 引導重新設定
+                showCheckUserIDisExist.value = false;
+                showCheckUserIDisNotExist.value = true;
+                errorMsg.value = '找不到您的帳號資料，請重新完成設定';
+            } else if (error.response?.status === 500) {
+                orderError.value = '預約系統暫時無法使用，請稍後再試';
+            } else {
+                orderError.value = backendMsg || '預約失敗，請稍後再試或聯絡診所';
             }
-            alert(msg);
             console.log(error);
         });
     }, 2000);
