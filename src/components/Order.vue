@@ -124,6 +124,9 @@
                 <p class="text-sm text-gray-700">⚠️ 請先綁定您的身分證號碼</p>
                 <p class="text-sm text-gray-700 mt-1">完成設定後即可進行預約</p>
             </div>
+            <div v-if="errorMsg" class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                <p class="text-sm text-red-700">{{ errorMsg }}</p>
+            </div>
             <button
                 @click="$router.push('/')"
                 class="w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
@@ -228,6 +231,7 @@ const input = ref({
 
 let addOrderTimer = null;
 const showError = ref(false);
+const errorMsg = ref('');
 
 const addOrderFunc = () => {
     showError.value = false;
@@ -284,44 +288,39 @@ const addOrderFunc = () => {
 
 const checkUserIDisExistFunc = () => {
     console.log("[Order] checkUserIDisExistFunc 被呼叫, userid:", user.userid);
+    errorMsg.value = '';
     const formData = new FormData();
-    formData.append('method', 'checkUserIDisExist');
     formData.append('userid', user.userid);
-    //formData.append('userid', 'U14b5e7710fe33928351643793294dc3c');
-    console.log(formData.get('userid'))
     axios({
         method: 'post',
-        url: 'https://script.google.com/macros/s/AKfycbxv0X4hKmjRsqICHL8WTa4nqpql6Rbq9w1njra_4jcFN-OcbZ4zxARyuyN9h2PCvvnB/exec',
+        url: 'https://fju-line-app.herokuapp.com/infolinebot/order_get_user_registered',
         data: formData,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000
     })
     .then(response => {
         console.log("[Order] API 回應:", response.data);
-        if(response.data.result === "useridisexist"){
-            personID.value = response.data.personid;
-            res.value = response.data;
-            showCheckUserIDisExist.value = true;
-        }else{
-            showCheckUserIDisExist.value = false;
-            showCheckUserIDisNotExist.value = true;
-
-            res.value = response.data;
-        }
-
         idPending.value = false;
-        // Handle the response here
+        const { result } = response.data;
+        if (result === 'success') {
+            personID.value = response.data.personid;
+            showCheckUserIDisExist.value = true;
+        } else if (result === 'useridnotexist') {
+            showCheckUserIDisNotExist.value = true;
+        } else if (result === 'personidnotexist') {
+            showCheckUserIDisNotExist.value = true;
+            errorMsg.value = response.data.message || 'LINE 帳號綁定資料不完整，請前往重新設定';
+        } else {
+            showCheckUserIDisNotExist.value = true;
+        }
     })
     .catch(error => {
         console.error("[Order] API 錯誤:", error);
         idPending.value = false;
-        if (error.code === 'ECONNABORTED') {
-            alert('連線逾時，請檢查網路連線後再試');
-        } else {
-            alert('系統錯誤，請稍後再試');
-        }
-        console.log(error);
-        res.value = error.data;
+        showCheckUserIDisNotExist.value = true;
+        errorMsg.value = error.code === 'ECONNABORTED'
+            ? '連線逾時，請檢查網路後再試'
+            : '系統錯誤，請稍後再試';
     });
 }
 
