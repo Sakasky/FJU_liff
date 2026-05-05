@@ -316,7 +316,7 @@ const addPersonVIP = () => {
 const addPersonIDFunc = () => {
     errorMsg.value = '';
     if(!personName.value || !personPhone.value){
-        alert("請輸入姓名與電話");
+        errorMsg.value = '請輸入姓名與電話';
         return;
     }
     const formData = new FormData();
@@ -347,9 +347,13 @@ const addPersonIDFunc = () => {
         idPending.value = false;
         addPersonID.value = true;
         if (error.code === 'ECONNABORTED') {
-            alert('連線逾時，請檢查網路連線後再試');
+            errorMsg.value = '連線逾時，請檢查網路後再試';
+        } else if (error.response?.data?.message === '此身分證號已存在') {
+            errorMsg.value = '此身分證號已有帳號，如需協助請聯繫診所';
+        } else if (error.response?.data?.message === '缺少必要欄位') {
+            errorMsg.value = '請確認姓名與電話欄位已填寫';
         } else {
-            alert('註冊失敗，請稍後再試');
+            errorMsg.value = '系統錯誤，請稍後再試';
         }
         console.log(error);
     });
