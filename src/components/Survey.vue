@@ -256,7 +256,6 @@ const checkVIPisExist = () => {
     }) 
     .then(response => {
         console.log("response",response);
-        errorMsg.value = '';
         if (response.data.result === "personidisexist") {
             idPending.value = false;
             checkUserVIPisExist.value = true;
@@ -306,11 +305,9 @@ const addPersonVIP = () => {
     .catch(error => {
         idPending.value = false;
         checkUserVIPisExist.value = true;
-        if (error.code === 'ECONNABORTED') {
-            alert('連線逾時，請檢查網路連線後再試');
-        } else {
-            alert('綁定失敗，請稍後再試');
-        }
+        errorMsg.value = error.code === 'ECONNABORTED'
+            ? '連線逾時，請檢查網路後再試'
+            : (error.response?.data?.message || '綁定失敗，請稍後再試');
         console.log(error);
     });
     
