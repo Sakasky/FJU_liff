@@ -348,9 +348,9 @@ const addPersonIDFunc = () => {
         addPersonID.value = true;
         if (error.code === 'ECONNABORTED') {
             errorMsg.value = '連線逾時，請檢查網路後再試';
-        } else if (error.response?.data?.message === '此身分證號已存在') {
+        } else if (error.response?.data?.message === '此身分證號已存在') { // HTTP 400: add_person_info 身分證重複
             errorMsg.value = '此身分證號已有帳號，如需協助請聯繫診所';
-        } else if (error.response?.data?.message === '缺少必要欄位') {
+        } else if (error.response?.data?.message === '缺少必要欄位') { // HTTP 400: add_person_info 欄位不完整
             errorMsg.value = '請確認姓名與電話欄位已填寫';
         } else {
             errorMsg.value = '系統錯誤，請稍後再試';
