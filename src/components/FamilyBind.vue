@@ -12,13 +12,13 @@
         <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
             <div class="text-center mb-6">
                 <div class="text-5xl mb-4">👨‍👩‍👧‍👦</div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">家屬綁定</h1>
-                <p class="text-gray-600 text-sm">輸入要加入的病患身分證號碼與您的關係</p>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">新增家人</h1>
+                <p class="text-gray-600 text-sm">輸入家人的身分證號碼，將其加入您的家人清單</p>
             </div>
             <form class="space-y-5" @submit.prevent="submitBind">
                 <div>
                     <label for="targetPersonid" class="block font-bold text-gray-700 mb-2">
-                        病患身分證字號 <span class="text-red-500">*</span>
+                        家人身分證字號 <span class="text-red-500">*</span>
                     </label>
                     <input
                         type="text"
@@ -33,7 +33,7 @@
                 </div>
                 <div>
                     <label for="relationship" class="block font-bold text-gray-700 mb-2">
-                        您與病患的關係 <span class="text-red-500">*</span>
+                        家人與您的關係 <span class="text-red-500">*</span>
                     </label>
                     <select
                         id="relationship"
@@ -84,12 +84,11 @@
         <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
             <div class="mb-6">
                 <div class="text-6xl mb-4">✅</div>
-                <h2 class="text-2xl font-bold text-green-600 mb-2">綁定成功！</h2>
-                <p class="text-gray-600 text-sm">您已成功加入病患的家屬名單</p>
+                <h2 class="text-2xl font-bold text-green-600 mb-2">新增成功！</h2>
+                <p class="text-gray-600 text-sm">已成功加入家人：<span class="font-bold text-gray-800">{{ boundName }}</span></p>
             </div>
             <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 text-left">
-                <p class="text-sm text-gray-700">✓ 病患日後可在預約系統中看到您的資料</p>
-                <p class="text-sm text-gray-700 mt-1">✓ 可代為預約門診</p>
+                <p class="text-sm text-gray-700">✓ 您現在可在預約系統中替此家人預約門診</p>
             </div>
             <button
                 @click="$emit('close-window')"
@@ -114,6 +113,7 @@ const showNotRegistered = ref(false);
 const showSuccess = ref(false);
 const isSending = ref(false);
 const errorMsg = ref('');
+const boundName = ref('');
 
 const targetPersonid = ref('');
 const relationship = ref('');
@@ -136,8 +136,9 @@ const submitBind = () => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         timeout: 15000
     })
-    .then(() => {
+    .then(response => {
         isSending.value = false;
+        boundName.value = response.data?.bound_name || '';
         showForm.value = false;
         showSuccess.value = true;
     })
