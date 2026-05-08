@@ -6,7 +6,7 @@ import FamilyBind from "../components/FamilyBind.vue";
 const userdataUID = ref(null);
 
 onMounted(async () => {
-  liff.init({ liffId: "PLACEHOLDER_LIFF_ID" })
+  liff.init({ liffId: "1657869644-wuZuat4c" })
     .then(() => {
       if (liff.isLoggedIn()) {
         userdataUID.value = liff.getDecodedIDToken().sub;
