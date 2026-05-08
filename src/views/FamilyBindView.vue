@@ -2,6 +2,9 @@
 import liff from "@line/liff";
 import { onMounted, ref } from "vue";
 import FamilyBind from "../components/FamilyBind.vue";
+import VConsole from 'vconsole';
+
+new VConsole();
 
 const userdataUID = ref(null);
 
