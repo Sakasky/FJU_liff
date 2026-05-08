@@ -24,10 +24,9 @@
                 </button>
                 <button
                     @click="selectBookingType('family')"
-                    class="w-full bg-gray-300 text-gray-500 px-6 py-4 rounded-md cursor-not-allowed transition font-medium shadow-sm text-lg opacity-60"
-                    title="此功能尚未開放"
+                    class="w-full bg-green-500 text-white px-6 py-4 rounded-md hover:bg-green-600 transition font-medium shadow-sm text-lg"
                 >
-                    👨‍👩‍👧‍👦 家屬預約 (尚未開放)
+                    👨‍👩‍👧‍👦 家屬預約
                 </button>
             </div>
         </div>
@@ -53,8 +52,8 @@
                         required
                     >
                         <option value="" disabled>請選擇家屬</option>
-                        <option v-for="member in userData.family_members" :key="member.id" :value="member">
-                            {{ member }}
+                        <option v-for="(member, index) in userData.family_members" :key="member.personid || index" :value="member">
+                            {{ member.relationship }} - {{ member.name }}
                         </option>
                     </select>
                 </div>
@@ -114,7 +113,6 @@
                         v-model="input.personPhone"
                         pattern="[0-9]+"
                         class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
-                        :class="{ 'bg-gray-100': bookingType === 'self' }"
                         placeholder="請輸入電話號碼"
                         required
                     />
@@ -355,7 +353,7 @@ const selectBookingType = (type) => {
 const confirmFamilySelection = () => {
     if (selectedFamily.value) {
         input.value.personName = selectedFamily.value.name;
-        input.value.personPhone = selectedFamily.value.phone;
+        input.value.personPhone = '';
         showFamilySelection.value = false;
         showCheckUserIDisExist.value = true;
     }
