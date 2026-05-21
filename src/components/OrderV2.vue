@@ -240,7 +240,6 @@
             </div>
             <div class="bg-blue-50 rounded-lg p-4 mb-6">
                 <p class="text-sm text-gray-600">如有任何問題，請直接聯繫診所</p>
-                <p class="text-xs text-gray-500 mt-2">（測試模式 - 未實際送出）</p>
             </div>
             <button
                 @click="$emit('close-window')"
@@ -329,7 +328,8 @@ const input = ref({
     doctor: '',
     department: '',
     orderDate: '',
-    notes: ''
+    notes: '',
+    bookingPersonId: ''
 })
 
 let addOrderTimer = null;
@@ -343,6 +343,7 @@ const selectBookingType = (type) => {
         // 個人預約：帶入本人資料
         input.value.personName = userData.value.personname;
         input.value.personPhone = userData.value.personphone;
+        input.value.bookingPersonId = userData.value.personid;
         showCheckUserIDisExist.value = true;
     } else if (type === 'family') {
         // 家屬預約：顯示家屬選單
@@ -354,6 +355,7 @@ const confirmFamilySelection = () => {
     if (selectedFamily.value) {
         input.value.personName = selectedFamily.value.name;
         input.value.personPhone = '';
+        input.value.bookingPersonId = selectedFamily.value.personid;
         showFamilySelection.value = false;
         showCheckUserIDisExist.value = true;
     }
@@ -368,6 +370,7 @@ const backToTypeSelection = () => {
     selectedFamily.value = '';
     input.value.personName = '';
     input.value.personPhone = '';
+    input.value.bookingPersonId = '';
     input.value.department = '';
     input.value.orderDate = '';
     input.value.doctor = '';
@@ -399,6 +402,7 @@ const addOrderFunc = () => {
         params.append('department', input.value.department);
         params.append('orderDate', input.value.orderDate);
         params.append('notes', input.value.notes || '');
+        params.append('bookingPersonId', input.value.bookingPersonId || '');
         isSending.value = true;
 
         axios({
