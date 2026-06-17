@@ -149,6 +149,8 @@ const submitBind = () => {
         } else if (error.response?.status === 400 && error.response?.data?.message === '請先完成身份綁定') {
             showForm.value = false;
             showNotRegistered.value = true;
+        } else if (error.response?.status === 404) {
+            errorMsg.value = '查無此身分證，可能尚未註冊系統，請聯絡門診';
         } else if (error.response?.status === 500) {
             errorMsg.value = '系統錯誤，請稍後再試或聯絡診所';
         } else {
