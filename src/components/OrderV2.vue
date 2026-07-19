@@ -255,6 +255,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import axios from 'axios';
+import { API_BASE } from '../api';
 
 const user = defineProps(['userid'])
 const res = ref(null)
@@ -407,7 +408,7 @@ const addOrderFunc = () => {
 
         axios({
             method: 'post',
-            url: 'https://fju-line-app.herokuapp.com/infolinebot/add_order',
+            url: `${API_BASE}/infolinebot/add_order`,
             data: params,
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             timeout: 15000
@@ -439,7 +440,7 @@ const checkUserIDisExistFunc = () => {
 
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/order_get_user_registered',
+        url: `${API_BASE}/infolinebot/order_get_user_registered`,
         data: params,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         timeout: 15000

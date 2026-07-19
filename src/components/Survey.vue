@@ -221,6 +221,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import axios from 'axios';
+import { API_BASE } from '../api';
 
 const user = defineProps(['userid'])
 
@@ -248,7 +249,7 @@ const checkVIPisExist = () => {
     showCheckUserIDisNotExist.value = false;
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/check_vip',
+        url: `${API_BASE}/infolinebot/check_vip`,
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000
@@ -290,7 +291,7 @@ const addPersonVIP = () => {
     checkUserVIPisExist.value = false;
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/add_person_vip',
+        url: `${API_BASE}/infolinebot/add_person_vip`,
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000
@@ -332,7 +333,7 @@ const addPersonIDFunc = () => {
     addPersonID.value = false;
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/add_person_info',
+        url: `${API_BASE}/infolinebot/add_person_info`,
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000
@@ -369,7 +370,7 @@ const checkUserIDisExistFunc = () => {
 
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/check_user_registered',
+        url: `${API_BASE}/infolinebot/check_user_registered`,
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000

@@ -103,6 +103,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import axios from 'axios';
+import { API_BASE } from '../api';
 
 const user = defineProps(['userid']);
 defineEmits(['close-window']);
@@ -131,7 +132,7 @@ const submitBind = () => {
 
     axios({
         method: 'post',
-        url: 'https://fju-line-app.herokuapp.com/infolinebot/bind_family_member',
+        url: `${API_BASE}/infolinebot/bind_family_member`,
         data: params,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         timeout: 15000
