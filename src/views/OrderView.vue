@@ -1,4 +1,5 @@
 <script setup>
+import { LIFF_IDS } from '../api';
 import liff from "@line/liff";
 import { onMounted, ref } from "vue";
 import Order from "../components/Order.vue";
@@ -6,7 +7,7 @@ import Order from "../components/Order.vue";
 const userdataUID = ref(null);
 
 onMounted(async () => {
-  liff.init({ liffId: "1657869644-x3BZd5wE" })
+  liff.init({ liffId: LIFF_IDS.order })
     .then(() => {
       if (liff.isLoggedIn()) {
         userdataUID.value = liff.getDecodedIDToken().sub;

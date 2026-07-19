@@ -1,4 +1,5 @@
 <script setup>
+import { LIFF_IDS } from '../api';
 import liff from "@line/liff";
 import { onMounted, ref } from "vue";
 import FamilyBind from "../components/FamilyBind.vue";
@@ -8,7 +9,7 @@ import FamilyBind from "../components/FamilyBind.vue";
 const userdataUID = ref(null);
 
 onMounted(async () => {
-  liff.init({ liffId: "1657869644-wuZuat4c" })
+  liff.init({ liffId: LIFF_IDS.familyBind })
     .then(() => {
       if (liff.isLoggedIn()) {
         userdataUID.value = liff.getDecodedIDToken().sub;

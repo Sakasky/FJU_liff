@@ -19,7 +19,7 @@
             <p class="text-gray-600 text-sm mb-6">如需修改請洽本診所</p>
             <div class="border-t pt-6">
                 <p class="text-gray-700 mb-3">若需要預約請填寫</p>
-                <a href="https://liff.line.me/1657869644-x3BZd5wE" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium">前往預約</a>
+                <a :href="`https://liff.line.me/${LIFF_IDS.order}`" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium">前往預約</a>
             </div>
         </div>
     </div>
@@ -167,7 +167,7 @@
             <div class="border-t pt-6 space-y-4">
                 <p class="text-gray-700">若需要預約請點擊下方按鈕</p>
                 <a
-                    href="https://liff.line.me/1657869644-x3BZd5wE"
+                    :href="`https://liff.line.me/${LIFF_IDS.order}`"
                     class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm text-center"
                 >
                     前往預約
@@ -194,7 +194,7 @@
             <div class="border-t pt-6 space-y-4">
                 <p class="text-gray-700">若需要預約請點擊下方按鈕</p>
                 <a
-                    href="https://liff.line.me/1657869644-x3BZd5wE"
+                    :href="`https://liff.line.me/${LIFF_IDS.order}`"
                     class="block w-full bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm text-center"
                 >
                     前往預約
@@ -221,7 +221,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import axios from 'axios';
-import { API_BASE } from '../api';
+import { API_BASE, LIFF_IDS } from '../api';
 
 const user = defineProps(['userid'])
 
