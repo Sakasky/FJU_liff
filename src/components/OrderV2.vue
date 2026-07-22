@@ -129,7 +129,7 @@
                         required
                     >
                         <option value="" disabled>請選擇科別</option>
-                        <option v-for="department in department_data" :value="department" :key="department">{{ department }}</option>
+                        <option v-for="d in department_data" :value="d.code" :key="d.code">{{ d.name }}</option>
                     </select>
                     <p v-if="showError && !input.department" class="text-red-500 text-xs mt-1">請選擇科別</p>
                 </div>
@@ -234,7 +234,7 @@
                     <p class="text-sm font-bold text-gray-800">預約資訊：</p>
                     <p class="text-sm text-gray-700">姓名：{{ input.personName }}</p>
                     <p class="text-sm text-gray-700">電話：{{ input.personPhone }}</p>
-                    <p class="text-sm text-gray-700">科別：{{ input.department }}</p>
+                    <p class="text-sm text-gray-700">科別：{{ deptName }}</p>
                     <p class="text-sm text-gray-700">就診日：{{ input.orderDate }}</p>
                 </div>
             </div>
@@ -253,7 +253,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { API_BASE } from '../api';
 
@@ -285,40 +285,16 @@ const userData = ref({
     family_members: []
 });
 
-// Department Data
-const department_data = [
-    "ANES/麻醉疼痛科",
-    "BS/乳房外科",
-    "CM/胸腔內科",
-    "CVS/心臟血管外科",
-    "CRS/直腸外科",
-    "CS/胸腔外科",
-    "DERM/皮膚科",
-    "CV/心臟內科",
-    "Diet/營養諮詢",
-    "ENT/耳鼻喉科",
-    "FM/家庭醫學科",
-    "GI/胃腸肝膽科",
-    "GS/一般外科",
-    "GU/泌尿外科",
-    "OBGY/婦產科",
-    "HEMA/血液腫瘤科",
-    "NS/神經外科",
-    "INF/感染科",
-    "META/新陳代謝科",
-    "NEPH/腎臟內科",
-    "NEUR/神經內科",
-    "OPH/眼科",
-    "ORTH/骨科",
-    "PED/小兒科",
-    "PS/整形外科",
-    "PSY/精神科",
-    "REHA/復健科",
-    "IMRH/風濕免疫科",
-    "CADP/腹膜透析",
-    "心理諮商",
-    "PEDS/小兒外科"
-];
+// 科別清單改由後端提供（Ragic 科別表），value 為科別代碼
+const department_data = ref([]);
+onMounted(() => {
+    axios.get(`${API_BASE}/infolinebot/get_departments`)
+        .then(res => { department_data.value = res.data.departments || []; })
+        .catch(err => { console.error('科別清單載入失敗', err); });
+});
+// 已選科別的顯示名稱（確認頁用）
+const deptName = computed(() =>
+    department_data.value.find(d => d.code === input.value.department)?.name || input.value.department);
 
 // Form Input
 const input = ref({
