@@ -72,13 +72,15 @@
                 </div>
                 <div>
                     <label for="doctor" class="block font-bold text-gray-700 mb-2">約診醫生</label>
-                    <input
-                        type="text"
+                    <select
                         id="doctor"
                         v-model="input.doctor"
-                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
-                        placeholder="選填"
-                    />
+                        :disabled="!input.department"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition disabled:bg-gray-100 disabled:text-gray-400"
+                    >
+                        <option value="">{{ input.department ? '不指定（選填）' : '請先選擇科別' }}</option>
+                        <option v-for="d in filteredDoctors" :value="d.code" :key="d.code">{{ d.name }}</option>
+                    </select>
                 </div>
                 <div>
                     <label for="issue" class="block font-bold text-gray-700 mb-2">看診問題/備註事項</label>
@@ -165,7 +167,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { API_BASE } from '../api';
 
@@ -182,12 +184,16 @@ const showCheckUserIDisNotExist = ref(false);
 const idPending = ref(true);
 const isSending = ref(false);
 const finishOrder = ref(false);
-// 科別清單改由後端提供（Ragic 科別表），value 為科別代碼
+// 科別/醫生清單改由後端提供（Ragic 科別表、醫生資料），value 為代碼
 const department_data = ref([]);
+const doctor_data = ref([]);
 onMounted(() => {
     axios.get(`${API_BASE}/infolinebot/get_departments`)
         .then(res => { department_data.value = res.data.departments || []; })
         .catch(err => { console.error('科別清單載入失敗', err); });
+    axios.get(`${API_BASE}/infolinebot/get_doctors`)
+        .then(res => { doctor_data.value = res.data.doctors || []; })
+        .catch(err => { console.error('醫生清單載入失敗', err); });
 });
 const input = ref({
     method: 'addOrder',
@@ -199,6 +205,11 @@ const input = ref({
     orderDate: '',
     notes: ''
 })
+
+// 醫生依所選科別連動過濾；換科別時清空已選醫生
+const filteredDoctors = computed(() =>
+    doctor_data.value.filter(d => d.dept_code === input.value.department));
+watch(() => input.value.department, () => { input.value.doctor = ''; });
 
 let addOrderTimer = null;
 const showError = ref(false);
@@ -283,6 +294,9 @@ const checkUserIDisExistFunc = () => {
         const { result } = response.data;
         if (result === 'success') {
             personID.value = response.data.personid;
+            // 自動帶入姓名與電話（欄位仍可自行修改）
+            input.value.personName = response.data.personname || '';
+            input.value.personPhone = response.data.personphone || '';
             showCheckUserIDisExist.value = true;
         } else if (result === 'useridnotexist') {
             showCheckUserIDisNotExist.value = true;
