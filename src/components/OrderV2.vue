@@ -40,8 +40,8 @@
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">選擇家屬</h1>
                 <p class="text-gray-600 text-sm">請選擇要預約的家屬</p>
             </div>
-            <form class="space-y-5" @submit.prevent="confirmFamilySelection">
-                <div>
+            <form v-if="!showAddFamily" class="space-y-5" @submit.prevent="confirmFamilySelection">
+                <div v-if="userData.family_members.length">
                     <label for="family" class="block font-bold text-gray-700 mb-2">
                         家屬姓名 <span class="text-red-500">*</span>
                     </label>
@@ -57,6 +57,14 @@
                         </option>
                     </select>
                 </div>
+                <p v-else class="text-sm text-gray-500 text-center">您尚未綁定任何家人，請先新增家人</p>
+                <button
+                    type="button"
+                    @click="showAddFamily = true"
+                    class="w-full border-2 border-dashed border-green-400 text-green-600 px-6 py-3 rounded-md hover:bg-green-50 transition font-medium"
+                >
+                    ＋ 新增家人
+                </button>
                 <div class="flex space-x-3">
                     <button
                         type="button"
@@ -67,9 +75,92 @@
                     </button>
                     <button
                         type="submit"
-                        class="flex-1 bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
+                        :disabled="!userData.family_members.length"
+                        class="flex-1 bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm disabled:opacity-50"
                     >
                         下一步 →
+                    </button>
+                </div>
+            </form>
+
+            <!-- 內嵌新增家人：輸入身分證＋關係 → 已建檔遮罩確認／未建檔補姓名 → 綁定後直接續填預約 -->
+            <form v-else class="space-y-4" @submit.prevent="submitAddFamily">
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">家人身分證號 <span class="text-red-500">*</span></label>
+                    <input
+                        type="text"
+                        v-model="newFam.pid"
+                        pattern="[A-Za-z][0-9]{9}"
+                        placeholder="例：A123456789"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        :disabled="famCheck !== null"
+                        required
+                    />
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-2">與您的關係 <span class="text-red-500">*</span></label>
+                    <select
+                        v-model="newFam.rel"
+                        class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        required
+                    >
+                        <option value="" disabled>請選擇關係</option>
+                        <option v-for="rel in relationshipOptions" :key="rel" :value="rel">{{ rel }}</option>
+                    </select>
+                </div>
+
+                <div v-if="famCheck === 'exists'" class="bg-blue-50 rounded-lg p-4 text-center">
+                    <p class="text-gray-700">此身分證號為 <span class="text-xl font-bold text-blue-600">{{ famMaskedName }}</span></p>
+                    <p class="text-gray-700 mt-1">是您的家人嗎？確認後將加入家人清單</p>
+                </div>
+
+                <template v-if="famCheck === 'notfound'">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3">
+                        <p class="text-sm text-gray-700">查無此身分證的就診記錄，請補填家人基本資料完成建檔</p>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-2">家人姓名 <span class="text-red-500">*</span></label>
+                        <input
+                            type="text"
+                            v-model="newFam.name"
+                            placeholder="請輸入家人姓名"
+                            class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-2">家人電話（選填）</label>
+                        <input
+                            type="text"
+                            v-model="newFam.phone"
+                            pattern="[0-9]*"
+                            placeholder="選填"
+                            class="w-full border border-gray-300 rounded-md px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition"
+                        />
+                    </div>
+                </template>
+
+                <div v-if="famErrorMsg" class="bg-red-50 border-l-4 border-red-500 p-3">
+                    <p class="text-sm text-red-700">{{ famErrorMsg }}</p>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button
+                        type="button"
+                        @click="resetAddFamily"
+                        class="flex-1 bg-gray-300 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-400 transition font-medium shadow-sm"
+                    >
+                        ← 返回
+                    </button>
+                    <button
+                        type="submit"
+                        :disabled="famBusy"
+                        class="flex-1 bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition font-medium shadow-sm disabled:opacity-50"
+                    >
+                        <span v-if="famBusy">⏳ 處理中...</span>
+                        <span v-else-if="famCheck === null">查詢</span>
+                        <span v-else-if="famCheck === 'exists'">✓ 確認綁定並預約</span>
+                        <span v-else>✓ 建檔綁定並預約</span>
                     </button>
                 </div>
             </form>
@@ -347,6 +438,83 @@ const confirmFamilySelection = () => {
         showFamilySelection.value = false;
         showCheckUserIDisExist.value = true;
     }
+};
+
+// ---- 內嵌新增家人 ----
+const relationshipOptions = ['配偶', '子女', '父母', '兄弟姐妹', '其他'];
+const showAddFamily = ref(false);
+const newFam = ref({ pid: '', rel: '', name: '', phone: '' });
+const famCheck = ref(null);        // null=尚未查詢 | 'exists' | 'notfound'
+const famMaskedName = ref('');
+const famErrorMsg = ref('');
+const famBusy = ref(false);
+
+const resetAddFamily = () => {
+    showAddFamily.value = false;
+    newFam.value = { pid: '', rel: '', name: '', phone: '' };
+    famCheck.value = null;
+    famMaskedName.value = '';
+    famErrorMsg.value = '';
+};
+
+// 第一步查詢：已建檔 → 遮罩姓名確認；未建檔 → 展開補填欄位。第二步送出綁定
+const submitAddFamily = () => {
+    famErrorMsg.value = '';
+    const pid = newFam.value.pid.trim().toUpperCase();
+
+    if (famCheck.value === null) {
+        famBusy.value = true;
+        const fd = new FormData();
+        fd.append('personid', pid);
+        fd.append('userid', user.userid);
+        axios.post(`${API_BASE}/infolinebot/check_person_exists`, fd, { timeout: 15000 })
+            .then(res => {
+                famBusy.value = false;
+                if (res.data.result === 'personidisexist') {
+                    famCheck.value = 'exists';
+                    famMaskedName.value = res.data.personname;  // 遮罩姓名
+                } else {
+                    famCheck.value = 'notfound';
+                }
+            })
+            .catch(err => {
+                famBusy.value = false;
+                famErrorMsg.value = err.response?.data?.message || '查詢失敗，請稍後再試';
+            });
+        return;
+    }
+
+    const params = new URLSearchParams();
+    params.append('userid', user.userid);
+    params.append('target_personid', pid);
+    params.append('relationship', newFam.value.rel);
+    if (famCheck.value === 'notfound') {
+        if (!newFam.value.name.trim()) {
+            famErrorMsg.value = '請輸入家人姓名';
+            return;
+        }
+        params.append('target_name', newFam.value.name.trim());
+        params.append('target_phone', newFam.value.phone.trim());
+    }
+    famBusy.value = true;
+    axios.post(`${API_BASE}/infolinebot/bind_family_member`, params, { timeout: 15000 })
+        .then(res => {
+            famBusy.value = false;
+            const member = {
+                relationship: newFam.value.rel,
+                name: res.data.bound_name || newFam.value.name,
+                personid: pid,
+            };
+            userData.value.family_members.push(member);
+            resetAddFamily();
+            // 綁定完直接續填預約
+            selectedFamily.value = member;
+            confirmFamilySelection();
+        })
+        .catch(err => {
+            famBusy.value = false;
+            famErrorMsg.value = err.response?.data?.message || '綁定失敗，請稍後再試';
+        });
 };
 
 const backToTypeSelection = () => {

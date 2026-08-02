@@ -6,5 +6,4 @@ export const LIFF_IDS = {
   survey: import.meta.env.VITE_LIFF_ID_SURVEY || '1657869644-jDxqpoMV',
   order: import.meta.env.VITE_LIFF_ID_ORDER || '1657869644-x3BZd5wE',
   orderV2: import.meta.env.VITE_LIFF_ID_ORDER_V2 || '1657869644-z0PLNaQD',
-  familyBind: import.meta.env.VITE_LIFF_ID_FAMILY_BIND || '1657869644-wuZuat4c',
 };

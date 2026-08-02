@@ -31,7 +31,7 @@
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">身分驗證</h1>
                 <p class="text-gray-600">歡迎您申請本系統</p>
             </div>
-            <form class="space-y-4" @submit.prevent="checkVIPisExist()">
+            <form class="space-y-4" @submit.prevent="checkPersonExists()">
                 <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
                     <p class="text-sm text-gray-700">您的裝置尚未設定過身分證驗證</p>
                     <p class="text-sm text-gray-700 mt-1">請直接輸入身分證號進行驗證</p>
@@ -75,13 +75,13 @@
             </div>
             <div class="flex gap-3">
                 <button
-                    @click="addPersonVIP()"
+                    @click="bindPatient()"
                     class="flex-1 bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition font-medium shadow-sm"
                 >
                     ✓ 是的
                 </button>
                 <button
-                    @click="addPersonID = true;checkUserVIPisExist = false"
+                    @click="personID = ''; checkUserVIPisExist = false; showCheckUserIDisNotExist = true"
                     class="flex-1 bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition font-medium shadow-sm"
                 >
                     ✗ 不是
@@ -239,7 +239,8 @@ const finishAddVIPPersonID= ref(false);
 const errorMsg = ref('');
 const vipName = ref('');
 
-const checkVIPisExist = () => {
+// 依身分證查病患是否已建檔（後端回遮罩姓名，不分 VIP）
+const checkPersonExists = () => {
     errorMsg.value = '';
     const formData = new FormData();
     formData.append('personid', personID.value);
@@ -249,25 +250,19 @@ const checkVIPisExist = () => {
     showCheckUserIDisNotExist.value = false;
     axios({
         method: 'post',
-        url: `${API_BASE}/infolinebot/check_vip`,
+        url: `${API_BASE}/infolinebot/check_person_exists`,
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000
-    }) 
+    })
     .then(response => {
         console.log("response",response);
+        idPending.value = false;
         if (response.data.result === "personidisexist") {
-            idPending.value = false;
             checkUserVIPisExist.value = true;
-            personName.value = response.data.personname;
-        } else if (response.data.result === "personidnotexist") {
-            idPending.value = false;
-            addPersonID.value = true;
+            personName.value = response.data.personname;  // 遮罩姓名（王○明）
         } else {
-            // edge case: is_vip=false 但無 result（VIP 表為空等情況）
-            idPending.value = false;
-            showCheckUserIDisNotExist.value = true;
-            errorMsg.value = response.data.message || '系統資料讀取失敗，請聯繫診所';
+            addPersonID.value = true;
         }
     })
     .catch(error => {
@@ -280,10 +275,10 @@ const checkVIPisExist = () => {
     });
 }
 
-const addPersonVIP = () => {
+// 確認為本人後綁定既有病患
+const bindPatient = () => {
     errorMsg.value = '';
     const formData = new FormData();
-    formData.append('method', 'addPersonVIP');
     formData.append('personid', personID.value);
     formData.append('userid', user.userid);
 
@@ -291,15 +286,20 @@ const addPersonVIP = () => {
     checkUserVIPisExist.value = false;
     axios({
         method: 'post',
-        url: `${API_BASE}/infolinebot/add_person_vip`,
+        url: `${API_BASE}/infolinebot/bind_patient`,
         data: formData,
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 15000
     })
     .then(response => {
         idPending.value = false;
-        vipName.value = response.data?.data?.name || personName.value;
-        finishAddVIPPersonID.value = true;
+        if (response.data.result === 'success') {
+            vipName.value = response.data.personname || personName.value;
+            finishAddVIPPersonID.value = true;
+        } else {
+            // 邊界：確認期間記錄被移除 → 轉建檔流程
+            addPersonID.value = true;
+        }
     })
     .catch(error => {
         idPending.value = false;
@@ -313,7 +313,6 @@ const addPersonVIP = () => {
         }
         console.log(error);
     });
-    
 }
 
 const addPersonIDFunc = () => {
