@@ -1,8 +1,10 @@
 <script setup>
-import { LIFF_IDS } from '../api';
+import { LIFF_IDS, liffErrorText } from '../api';
 import liff from "@line/liff";
 import { onMounted, ref } from "vue";
 import OrderV2 from "../components/OrderV2.vue";
+
+const initError = ref('');
 //import VConsole from 'vconsole';
 
 //new VConsole();
@@ -24,6 +26,7 @@ onMounted(async () => {
   })
   .catch((err) => {
     console.log(err.code, err.message);
+    initError.value = liffErrorText(err, LIFF_IDS.orderV2);
   });
 })
 
@@ -34,7 +37,7 @@ const closeWindow = () => {
 
 <template>
   <div class="text-xl">
-
+    <pre v-if="initError" class="bg-red-50 border-l-4 border-red-500 text-red-700 text-sm p-4 m-4 whitespace-pre-wrap break-all">{{ initError }}</pre>
     <OrderV2 @close-window="closeWindow" :userid="userdataUID"/>
 
   </div>
