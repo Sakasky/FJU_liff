@@ -18,6 +18,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to, from) => {
   console.log('[Router] 導航完成:', to.path);
+  document.title = to.meta?.title || '聖路加門診';
 });
 
 router.onError((error, to) => {
